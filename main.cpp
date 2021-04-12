@@ -173,8 +173,9 @@ void drawTiles(){
 
 void drawTiles2(){
     // float *pixels = new float[screen_width * screen_height];
-    constexpr int power = 11;
+    constexpr int power = 10;
     constexpr int tilesX = ipow(2, power);
+    // int tilesX = screen_width;
     constexpr int tilesY = ipow(2, power);
     // std::vector<GLubyte> pixels(tiles * tiles, 255);
     // for (int i = 0; i < pixels.size() * 3 - 3; i+=3){
@@ -193,6 +194,7 @@ void drawTiles2(){
          pixels[i][j][0] = (GLubyte) i%255;
          pixels[i][j][1] = (GLubyte) i-j%255;
          pixels[i][j][2] = (GLubyte) i%255;
+        // pixels[i][j][2] = j > tilesY ? 100 : 50;
       }
    }
     auto *pixelData = pixels;
@@ -230,8 +232,8 @@ void main_loop() {
     handleEvents(zoomPhysics, panPhysics);
 
     // Calculate zoom and pan
-    scale = processPhysics <float> (zoomPhysics, 1.1f, 0.3f, 300);
-    offset = processPhysics <v2d> (panPhysics, {1.1,1.1}, {0,0}, {300,300});
+    scale = processPhysics <float> (zoomPhysics, 1.1f, 0.3f, 75);
+    // offset = processPhysics <v2d> (panPhysics, {1.1,1.1}, {0,0}, {300,300});
 
     // Set canvas size and buffer the vertices for the quad
     setCanvas();
