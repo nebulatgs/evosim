@@ -1,12 +1,14 @@
 #extension GL_OES_standard_derivatives:enable
 #define PI 3.141592
-precision lowp float;
+precision highp float;
+// precision highp vec2;
+
 
 // size of a square in pixel
 uniform float scale;
 
-uniform vec2 resolution;
-uniform vec2 offset;
+uniform highp vec2 resolution;
+uniform highp vec2 offset;
 //out vec4 fragColor;
 
 float aastep(float threshold,float value){
@@ -19,7 +21,7 @@ void main(){
         discard;}
     // Normalized pixel coordinates (from 0 to 1)
     // gl_FragCoord = gl_FragCoord + offset;
-    vec2 uv=(-gl_FragCoord.xy - offset)/resolution.xy;
+    highp vec2 uv=(-gl_FragCoord.xy - offset)/resolution.xy;
     float dotResolution=resolution.y/scale/2.;
     float dotRadius=.3;
     
@@ -27,7 +29,7 @@ void main(){
     uv.y*=dotResolution;
     uv.y+=.5;
     uv.x+=.5;
-    vec2 uv2=2.*fract(uv)-1.;
+    highp vec2 uv2=2.*fract(uv)-1.;
     //uv2.x *= u_resolution.x / u_resolution.y;
     float distance=length(uv2);
     
@@ -35,7 +37,7 @@ void main(){
     vec4 dark_gray = vec4(0);
     vec4 gray=vec4(.282,.282,.282,1);
     
-    vec4 Coord=cos(PI/scale*vec4((-gl_FragCoord.xy - offset),1,1));
+    highp vec4 Coord=cos(PI/scale*vec4((-gl_FragCoord.xy - offset),1,1));
     vec4 gridColor=mix(dark_gray, gray, aastep(.97,max(Coord.x,Coord.y)));
     // gridColor+=vec4(0,0,0,1);
     
@@ -63,7 +65,8 @@ void main(){
 
     // Output to screen 
     gl_FragColor = vec4(col,0.3);// / vec4(vec(5),1);
-}precision lowp float;
+}precision highp float;
+// precision highp vec2;
 
 uniform vec2 resolution;
 

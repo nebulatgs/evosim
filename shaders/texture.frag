@@ -1,4 +1,5 @@
-precision lowp float;
+precision highp float;
+// precision highp vec2;
 
 uniform vec2 resolution;
 
