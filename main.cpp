@@ -11,8 +11,9 @@ void main_loop() {
     handleEvents(zoomPhysics, panPhysics, 1.0f, 50.0f);
 
     // Calculate zoom and pan
-    stg.scale = processPhysics <float> (zoomPhysics, 1.1f, 1.0f, 50)[2];
-    offset = processPhysics <v2d> (panPhysics, {1.1,1.1}, {0,0}, {-50000,-50000})[2];
+    stg.scale = processPhysics(zoomPhysics, 1.1f, 1.0f, 50)[2];
+    offset = processPhysics(panPhysics, {1.1,1.1}, {1,1}, {1024 * 2 - (float)screen_width,1024 * 2 - (float)screen_height})[2];
+    std::cout << offset.y << '\n'; 
 
     // Set canvas size and buffer the vertices for the quad
     setCanvas();

@@ -111,47 +111,57 @@ void handleEvents(float *zoomPhysics, v2d *panPhysics, float scaleClipStart, flo
         // panPhysics[1] += v2d(-event.motion.xrel, event.motion.yrel)/100000;
     }
 }
-template <class vecT>
-vecT* processPhysics(vecT *physics, vecT drag, vecT clipStart, vecT clipEnd){
+float* processPhysics(float *physics, float drag, float clipStart, float clipEnd){
 
-    // Clip Position
-    // if(physics[2] > clipEnd){
-    //     physics[0] = clipEnd * 0;
-    //     physics[1] = clipEnd * 0;
-    //     physics[2] = clipEnd;
-    // }
-    // else if(physics[2] < clipStart){
-    //     physics[0] = clipStart * 0;
-    //     physics[1] = clipStart * 0;
-    //     physics[2] = clipStart;
-    // }
-    // else{
-    vecT temp = physics[2];
+    float temp = physics[2];
     physics[1] += physics[0];
     physics[0] /= drag;
 
-    // pos += vel
+    
+    // Clip Position
     physics[2] = physics[2] > clipEnd ? clipEnd : physics[2];
-    vecT adjVel = physics[1] * physics[2];
+    
+    // pos += vel
+    float adjVel = physics[1] * physics[2];
     physics[2] += adjVel;
     physics[1] /= drag;
-    // if(physics[2] > clipEnd){
-    //     physics[0] = physics[2] * 0;
-    //     physics[1] = physics[2] * 0;
-    //     physics[2] = clipEnd;
-    // }
-    // physics[2] = physics[2] < clipStart ? clipStart : physics[2];
+
     if(physics[2] < clipStart){
-        physics[0] = physics[2] * 0;
-        physics[1] = physics[2] * 0;
+        physics[0] = 0;
+        physics[1] = 0;
         physics[2] = clipStart;
     }
-    // if(physics[2] < clipStart){
-    //     physics[0] = physics[2] * 0;
-    //     physics[1] = physics[2] * 0;
-    //     physics[2] = temp;
-    // }
-    // std::cout << physics[2] << '\n';
+
+    return physics;
+}
+
+v2d* processPhysics(v2d *physics, v2d drag, v2d clipStart, v2d clipEnd){
+
+    v2d temp = physics[2];
+    physics[1] += physics[0];
+    physics[0] /= drag;
+
+    
+    // Clip Position
+    physics[2].x = physics[2].x > clipEnd.x ? clipEnd.x : physics[2].x;
+    physics[2].y = physics[2].y > clipEnd.y ? clipEnd.y : physics[2].y;
+
+    // pos += vel
+    v2d adjVel = physics[1] * physics[2];
+    physics[2] += adjVel;
+    physics[1] /= drag;
+    
+    if(physics[2].x < clipStart.x){
+        physics[0].x = 0;
+        physics[1].x = 0;
+        physics[2].x = clipStart.x;
+    }
+    if(physics[2].y < clipStart.y){
+        physics[0].y = 0;
+        physics[1].y = 0;
+        physics[2].y = clipStart.y;
+    }
+
     return physics;
 }
 // the function called by the javascript code
