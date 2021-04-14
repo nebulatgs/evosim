@@ -103,9 +103,10 @@ void main(){
         //col = vec3(1.,0,0);
     // Output to screen S
     vec4 texCol = texture2D(texture, normCoords * vec2(1.));
-    // if(texCol.xyz = vec3(0)){
-    //     discard;
-    // }
+    if(texCol.xyz == vec3(0)){
+        // texcol = vec4(0.086f, 0.086f, 0.086f, 1.0f);
+        discard;
+    }
     gl_FragColor = vec4(texCol.rgb,1);// / vec4(vec(5),1);
 }attribute vec4 position;
 void main()

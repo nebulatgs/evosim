@@ -1,9 +1,17 @@
 #include "tile.hpp"
 #include <iostream>
-extern int tilesX, tilesY;
+// extern int tilesX, tilesY;
 enum class mutationType {pSub, pIns, pDel, gInv, gDel};
 enum class TileType {Air, Food, Creature};
 
+struct Settings{
+    uint16_t screen_width, screen_height;
+    const uint16_t map_width, map_height;
+    const uint16_t tilesX, tilesY;
+    uint16_t init_width, init_height;
+    float scale, drag;
+};
+extern Settings stg;
 // Contains a vector of bases which are read 3 at a time (ex. ACG) to form proteins
 
 std::string Gene::toString(){
@@ -120,7 +128,7 @@ void Resource::draw(uint8_t *pixels){
     // for (i = 0; i < tilesX; i++) {
         // for (j = 0; j < tilesY; j++) {
             uint32_t col = food ? color : 0;
-            int index = x * 3 + (y * 3 * 1024);
+            int index = x * 3 + (y * 3 * stg.map_width);
             pixels[index++] = ((uint8_t*)&col)[0];
             pixels[index++] = ((uint8_t*)&col)[1];
             pixels[index++] = ((uint8_t*)&col)[2];        
@@ -141,7 +149,7 @@ void Border::draw(uint8_t *pixels){
     // int index = 0;
     // for (i = 0; i < tilesX; i++) {
         // for (j = 0; j < tilesY; j++) {
-            int index = x * 3 + (y * 3 * 1024);
+            int index = x * 3 + (y * 3 * stg.map_width);
             pixels[index++] = ((uint8_t*)&color)[0];
             pixels[index++] = ((uint8_t*)&color)[1];
             pixels[index++] = ((uint8_t*)&color)[2]; 

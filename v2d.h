@@ -13,8 +13,6 @@ struct v2d {
     v2d() { x = 0.0f; y = 0.0f; }
     //Create a vector from _x and _y
     v2d(const float _x, const float _y) : x(_x), y(_y) {}
-    //Create a new vector from frm
-// v2d(const v2d& frm) : x(frm.x), y(frm.y) {}
     //Set vector to _x and _y
     v2d set(float _x, float _y) { x = _x; y = _y; return(*this); }
     //Randomize this vector
@@ -49,15 +47,11 @@ struct v2d {
 
     v2d norm() { *this = *this * invLen(); return(*this); }
     v2d setLen(float mag) { 
-        // this->operator/=(len());
         this->operator*=(invLen() * mag);
-        //*this = this / len() * mag;
         return(*this); 
     }
     float len() { 
         return sqrtf((x*x) + (y*y));
-
-        //return(hypotf(x, y)); 
     }
 
     float invLen() {

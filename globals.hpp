@@ -29,11 +29,16 @@ GLubyte pixels[tilesX*tilesY*3] = {255};
 struct Settings{
     uint16_t screen_width, screen_height;
     const uint16_t map_width, map_height;
-    const uint16_t tilesX, tilesY;
-    uint16_t init_width, init_height;
+    // const uint16_t tilesX, tilesY;
+    // uint16_t init_width, init_height;
     float scale, drag;
 };
-Settings stg = {0,0,1024,1024,1024,1024,0,0,0,0};
+Settings stg = {
+    0, 0, // Screen Dimensions (init to zero, set later)
+    tilesX, tilesY, // Map Dimensions
+    0, // Scale
+    0  // Drag Factor
+};
 struct Grid{
     Grid(Grid _src, Settings _stg):
         xDivs(_src.xDivs),

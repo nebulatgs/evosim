@@ -15,8 +15,8 @@ void getScreenSize(){
         || document.body.clientHeight;
         return height;
     });
-    // screen_width = screen_width > 1920 ? 1920  : screen_width;
-    // screen_height = screen_height > 1080 ? 1080 : screen_height;
+    // screen_width = screen_width > stg.init_width ? stg.init_width  : screen_width;
+    // screen_height = screen_height > stg.init_height? stg.init_height : screen_height;
 }
 
 // GLfloat vertices[12] = {-1.0f,  1.0f,
@@ -224,7 +224,7 @@ void drawTiles2(){
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, tilesX, tilesY, 0, GL_RGB, GL_UNSIGNED_BYTE, pixels);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, stg.map_width, stg.map_height, 0, GL_RGB, GL_UNSIGNED_BYTE, pixels);
     
     glUseProgram(tiles2Program);
     GLint uniform_Resolution = glGetUniformLocation(tiles2Program, "resolution");
@@ -236,7 +236,7 @@ void drawTiles2(){
         glUniform2f(uniform_OffsetTiles, offset.x, offset.y);
 
     GLint uniform_tileDims = glGetUniformLocation(tiles2Program, "tileDims");
-        glUniform2f(uniform_tileDims, tilesX, tilesY);
+        glUniform2f(uniform_tileDims, stg.map_width, stg.map_height);
     GLint uniform_texture = glGetUniformLocation(tiles2Program, "texture");
         glUniform1i(uniform_texture, 0);
     // std::cout << stg.scale << '\n';
