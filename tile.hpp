@@ -12,23 +12,6 @@ struct Gene{
 };
 
 
-// class Organism{
-//     private:
-//         void pSub();
-//         void pIns();
-//     protected:
-//         uint32_t geneIndex;
-//     public:
-//         std::vector<Gene> genome;
-//         int mutate(int count, mutationType mutation);
-// };
-
-// class Species : public Organism{
-//     public:
-//         int speciesId;
-// };
-
-
 // Represents a single tile on the world grid
 class Tile{
     public:
@@ -76,14 +59,6 @@ class Creature : public Thing{
 
 
 
-// A type of tile inhabited by a creature
-// class Cell : public Thing{
-//     public:
-//         Cell(int x, int y, Creature *creature);
-//         // void draw(uint8_t *pixels);
-//         void update(uint8_t *pixels);
-//         Creature *creature;
-// };
 
 class Resource : public Thing{
     public:

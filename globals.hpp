@@ -9,6 +9,8 @@
 #include <fstream>
 #include <iterator>
 #include <vector>
+#include <list>
+#include <numeric>
 #pragma once
 // class Gene;
 
@@ -18,6 +20,7 @@ v2d panPhysics[3], offset;
 bool isMouseDown;
 GLuint gridProgram, tilesProgram, tiles2Program;
 SDL_Window *window;
+std::list<float> frameAvg;
 
 
 constexpr int64_t ipow(int64_t base, int exp, int64_t result = 1) {
@@ -38,7 +41,7 @@ Settings stg = {
     0, 0, // Screen Dimensions (init to zero, set later)
     tilesX, tilesY, // Map Dimensions
     0, // Scale
-    0  // Drag Factor
+    1.5f  // Drag Factor
 };
 struct Grid{
     Grid(Grid _src, Settings _stg):

@@ -5,16 +5,26 @@
 #include "render.hpp"
 Level *lvl;
 
-
+// float CalculateAvg(const std::list<float> &list)
+// {
+//     float avg = 0;
+//     std::list<float>::const_iterator it;
+//     for(it = list.begin(); it != list.end(); it++) avg += *it;
+//     avg /= list.size();
+// }
+float listAvg(const std::list<float> &list){
+    std::accumulate(list.begin(), list.end(), 0.0f) / list.size();
+}
 
 void main_loop() { 
+    uint64_t startTime = SDL_GetPerformanceCounter();
     handleEvents(zoomPhysics, panPhysics, 1.0f, 50.0f);
 
     // Calculate zoom and pan
     float maxScale = 1.0f;
-    stg.scale = processPhysics(zoomPhysics, 1.1f, maxScale, 50)[2];
-    offset = processPhysics(panPhysics, {1.1,1.1}, {1,1}, {stg.map_width * maxScale * 2 - (float)screen_width,stg.map_height * maxScale * 2 - (float)screen_height})[2];
-    std::cout << offset.y << '\n'; 
+    stg.scale = processPhysics(zoomPhysics, stg.drag, maxScale, 50)[2];
+    offset = processPhysics(panPhysics, {stg.drag, stg.drag}, {1,1}, {stg.map_width * maxScale * 2 - (float)screen_width,stg.map_height * maxScale * 2 - (float)screen_height})[2];
+    // std::cout << offset.y << '\n'; 
 
     // Set canvas size and buffer the vertices for the quad
     setCanvas();
@@ -24,7 +34,8 @@ void main_loop() {
     glClearColor(0.086f, 0.086f, 0.086f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    std::cout << offset.x << '\n';
+    // std::cout << offset.x << '\n';
+    memset(pixels, 0, stg.map_height * stg.map_width * 3);
     lvl->update(pixels);
     drawTiles2();
 
@@ -32,8 +43,16 @@ void main_loop() {
         drawGrid();
 
     SDL_GL_SwapWindow(window);
-
-    
+    uint64_t endTime = SDL_GetPerformanceCounter();
+    float elapsed = (endTime - startTime) / (float)SDL_GetPerformanceFrequency();
+    frameAvg.push_back(1.0f/elapsed);
+    if(frameAvg.size() > 20)
+        frameAvg.pop_front();
+    float sum = 0;
+    for(auto x : frameAvg){
+        sum += x;
+    }
+    std::cout << "Current FPS: " << std::to_string((int)round(sum/20.0f)) << '\n';
 }
 
 bool randDensity(int number){
@@ -73,11 +92,12 @@ int main()
             ));
             continue;
         }
+        if(randDensity(1000)){
         lvl->things.push_back(new Resource(
             x,
             y,
-            randDensity(1000)
-        ));
+            1
+        ));}
     }
     std::cout << lvl->things[14]->x << '\n';
 

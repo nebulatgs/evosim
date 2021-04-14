@@ -99,7 +99,7 @@ void handleEvents(float *zoomPhysics, v2d *panPhysics, float scaleClipStart, flo
                 //     zoomPhysics[2] += copysign(1.0, event.wheel.y) * 10;
                 // }
                 // else
-                    zoomPhysics[0] += ((float)event.wheel.y / 16000.0f);
+                    zoomPhysics[0] += ((float)event.wheel.y / 20000.0f);
                 break;
             case SDL_MULTIGESTURE:
                 zoomPhysics[0] += ((float)event.mgesture.dDist / 10);
