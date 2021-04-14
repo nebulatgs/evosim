@@ -73,7 +73,7 @@ int Creature::readNext(){
 void Creature::reset(){
     transcribedProteins.clear();
 }
-void Creature::update(uint8_t *pixels, Level* lvl){
+bool Creature::update(uint8_t *pixels, Level* lvl){
     // if(randDensity(100)){
     //     // lvl->things.push_back(new Creature(x+1, y, species));
     // }
@@ -82,17 +82,17 @@ void Creature::update(uint8_t *pixels, Level* lvl){
             if(thing->type == TileType::Resource){
                 if (x == thing->x && y == thing->y){
                     // thing->randomize();
-                    return;
+                    return 0;
                 }
                 int dist = abs(sqrt((x - thing->x) * (x - thing->x) + (y - thing->y) * (y - thing->y)));
-                if(dist < distance){
+                if(dist < distance && (thing->x - x== thing->y -y || thing->x - x ==0 || thing->y -y ==0)){
                     distance = dist;
                     closest_food = thing;
                 }
                 // y += thing->y > 0 ? 1 : -1;
             }
         }
-        found_food = true;
+        found_food = closest_food != nullptr;
         std::cout << closest_food->x << '\n';
     }
     
@@ -101,9 +101,11 @@ void Creature::update(uint8_t *pixels, Level* lvl){
 
     int tempY = (closest_food->y - y > 0 ? 1 : -1);
     y +=  (tempY + y)< stg.map_height && (tempY + y)> 0 ? tempY : 0;
+    energy -= 1;
     if(x == closest_food->x && y == closest_food->y){
         closest_food->randomize();
         found_food = false;
+        energy += 500;
     }
     for(auto tile : tiles){
             // x = !(bool)(rand() % 50) ? (rand() % stg.map_width) : x;
@@ -113,6 +115,7 @@ void Creature::update(uint8_t *pixels, Level* lvl){
             tile.y = y;
             tile.update(pixels);
     }
+    return !energy;
 }
 
 Resource::Resource(int x, int y, bool food):
@@ -126,16 +129,17 @@ Border::Border(int x, int y) : Thing(x, y, TileType::Wall){
     tiles.push_back(Tile(x, y, color));
 }
 
-void Border::update(uint8_t *pixels, Level* lvl){
+bool Border::update(uint8_t *pixels, Level* lvl){
     for(auto x : tiles){
         x.update(pixels);
     }
+    return 0;
 }
 void Thing::randomize(){
     x = (rand() % (stg.map_width - 2)) + 1;
     y = (rand() % (stg.map_height - 2)) + 1;
 }
-void Resource::update(uint8_t *pixels, Level* lvl){
+bool Resource::update(uint8_t *pixels, Level* lvl){
     if(food)
         for(auto tile : tiles){
             // x = !(bool)(rand() % 50) ? (rand() % stg.map_width) : x;
@@ -145,6 +149,7 @@ void Resource::update(uint8_t *pixels, Level* lvl){
             tile.y = y;
             tile.update(pixels);
         }
+        return 0;
 }
 
 void Tile::update(uint8_t *pixels){

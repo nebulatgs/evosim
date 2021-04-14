@@ -2,6 +2,7 @@
 // #include "globals.hpp"
 // #include <SDL_opengles2.h>
 #include <SDL.h>
+#include <iostream>
 // extern GLubyte* pixels;
 // Level::Level(){}
 
@@ -25,7 +26,12 @@
 //     // SDL_RenderPresent(renderer);
 // }
 void Level::update(uint8_t *pixels){
-    for(auto x : things){
-        x -> update(pixels, this);
+    for(int i = 0; i < things.size(); i++){
+        bool death = things[i] -> update(pixels, this);
+        if (death){
+            things.erase(things.begin() + i);
+        }
+        
     }
+    std::cout << (int)things.size() << '\n';
 }

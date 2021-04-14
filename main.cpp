@@ -97,7 +97,7 @@ int main()
             y,
             1
         ));}
-        if(randDensity(2000)){
+        if(randDensity(1000)){
         lvl->things.push_back(new Creature(
             x,
             y,

@@ -33,7 +33,7 @@ class Thing{
         uint32_t color;
         TileType type;
         std::vector<Tile> tiles;
-        virtual void update(uint8_t *pixels, Level* lvl);
+        virtual bool update(uint8_t *pixels, Level* lvl);
 };
 
 class Creature : public Thing{
@@ -55,12 +55,14 @@ class Creature : public Thing{
         std::vector<Gene> genome;
         int mutate(int count, mutationType mutation);
         Creature(int x, int y, int species);
-        void update(uint8_t *pixels, Level* lvl);
+        bool update(uint8_t *pixels, Level* lvl);
         int readNext();
         void reset();
         int species;
         uint32_t size;
         uint32_t color = 0x3C4CE7;
+        uint16_t energy = 400;
+
 };
 
 
@@ -70,7 +72,7 @@ class Resource : public Thing{
     public:
         Resource(int x, int y, bool food);
         // void draw(uint8_t *pixels);
-        void update(uint8_t *pixels, Level* lvl);
+        bool update(uint8_t *pixels, Level* lvl);
         void randomize();
         bool food;
         uint32_t color = 0xFF6E9055;
@@ -79,6 +81,6 @@ class Resource : public Thing{
 class Border : public Thing{
     public:
         Border(int x, int y);
-        void update(uint8_t *pixels, Level* lvl);
+        bool update(uint8_t *pixels, Level* lvl);
         uint32_t color = 0xFF926E5F;
 };
