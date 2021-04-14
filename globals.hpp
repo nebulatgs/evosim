@@ -10,6 +10,7 @@
 #include <iterator>
 #include <vector>
 #pragma once
+// class Gene;
 
 uint16_t screen_width, screen_height;
 float zoomPhysics[3], scale;

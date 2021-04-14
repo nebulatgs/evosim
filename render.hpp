@@ -1,6 +1,15 @@
 #include "globals.hpp"
 #pragma once
+class Gene;
+std::vector<std::vector<Gene>> ecosystem;
 
+
+void drawTile(uint32_t x, uint16_t y, uint32_t color, GLubyte *pixels){
+    int index = x * 3 + (y * 3 * stg.map_width);
+    pixels[index++] = ((uint8_t*)&color)[0];
+    pixels[index++] = ((uint8_t*)&color)[1];
+    pixels[index++] = ((uint8_t*)&color)[2];
+}
 
 void getScreenSize(){
     screen_width = (uint16_t)EM_ASM_INT({

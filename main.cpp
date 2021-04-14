@@ -25,7 +25,7 @@ void main_loop() {
     glClear(GL_COLOR_BUFFER_BIT);
 
     std::cout << offset.x << '\n';
-    lvl->draw(pixels);
+    lvl->update(pixels);
     drawTiles2();
 
     if(stg.scale > 20)
@@ -54,6 +54,11 @@ int main()
     
     initGL(window);
 
+    ecosystem.push_back({
+        {{{1}, 1}},
+        {{{2}, 2}},
+        {{{2}, 3}}
+    });
     Grid grid = Grid(stg.map_width, stg.map_height, stg);
     lvl = new Level(nullptr, grid.xDivs, grid.yDivs, grid.tWidth, grid.tHeight, 1 / stg.scale * 3, 0xFF434343);
 
@@ -62,23 +67,19 @@ int main()
         int x = i % grid.xDivs * grid.tWidth;
         int y = i / grid.xDivs * grid.tHeight;
         if(x == 0 || y == 0 || i % grid.xDivs == grid.xDivs - 1 || i / grid.xDivs == grid.yDivs - 1){
-            lvl->tiles.push_back(new Border(
+            lvl->things.push_back(new Border(
                 x,
-                y,
-                grid.tWidth,
-                grid.tHeight
+                y
             ));
             continue;
         }
-        lvl->tiles.push_back(new Resource(
+        lvl->things.push_back(new Resource(
             x,
             y,
-            grid.tWidth,
-            grid.tHeight,
             randDensity(1000)
         ));
     }
-    std::cout << lvl->tiles[144]->x << '\n';
+    std::cout << lvl->things[14]->x << '\n';
 
     emscripten_set_main_loop(main_loop, 0, true);
 

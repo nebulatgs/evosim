@@ -3,6 +3,7 @@
 // extern int tilesX, tilesY;
 enum class mutationType {pSub, pIns, pDel, gInv, gDel};
 enum class TileType {Air, Food, Creature};
+extern std::vector<std::vector<Gene>> ecosystem;
 
 struct Settings{
     uint16_t screen_width, screen_height;
@@ -37,26 +38,26 @@ std::string Gene::toString(){
 
 
 
-void Organism::pSub(){
-    int geneIndex = ((float)rand() / (float)RAND_MAX) * genome.size();
-    int baseIndex = ((float)rand() / (float)RAND_MAX) * genome[geneIndex].bases.size();
-    genome[geneIndex].bases[baseIndex] = rand() % 2;
-}
-void Organism::pIns(){
+// void Organism::pSub(){
+//     int geneIndex = ((float)rand() / (float)RAND_MAX) * genome.size();
+//     int baseIndex = ((float)rand() / (float)RAND_MAX) * genome[geneIndex].bases.size();
+//     genome[geneIndex].bases[baseIndex] = rand() % 2;
+// }
+// void Organism::pIns(){
 
-}
-int Organism::mutate(int count, mutationType mutation = mutationType::pSub){
-    switch (mutation){
-        case mutationType::pIns:
-            pSub(); 
-            break;
+// }
+// int Organism::mutate(int count, mutationType mutation = mutationType::pSub){
+//     switch (mutation){
+//         case mutationType::pIns:
+//             pSub(); 
+//             break;
         
-        default:
-            pSub();
-            break;
-    }
-    return 0;
-}
+//         default:
+//             pSub();
+//             break;
+//     }
+//     return 0;
+// }
 
 
 
@@ -70,11 +71,11 @@ int Creature::digitConcat(std::vector<int> digits){
     return sum;
 }
 
-int transcribeIndex = 0;
-std::vector<int> transcribedProteins;
+// int transcribeIndex = 0;
+// std::vector<int> transcribedProteins;
 
-Creature::Creature(Species *_species) : species(_species), size(1){
-    genome = _species->genome;
+Creature::Creature(int x, int y, int species) : Thing(x, y), species(species), size(1){
+    genome = ecosystem[species];
 }
 int Creature::readNext(){
     // int key = digitConcat({
@@ -100,47 +101,49 @@ void Creature::reset(){
 
 
 // A type of tile inhabited by a creature
-Cell::Cell(int x, int y, int width, int height, Creature *creature):
-    Tile(x,y,width,height),
-    creature(creature){
-}
-void Cell::draw(uint8_t *pixels){
-    // gTileTexture.render( mBox.x - camera.x, mBox.y - camera.y, &gTileClips[ mType ] );
-};
+// Cell::Cell(int x, int y, Creature *creature):
+//     Thing(x,y),
+//     creature(creature){
+// }
+// void Cell::update(uint8_t *pixels){
+//     int index = x * 3 + (y * 3 * stg.map_width);
+//     pixels[index++] = ((uint8_t*)&color)[0];
+//     pixels[index++] = ((uint8_t*)&color)[1];
+//     pixels[index++] = ((uint8_t*)&color)[2];
+//     // gTileTexture.render( mBox.x - camera.x, mBox.y - camera.y, &gTileClips[ mType ] );
+// };
 
-void Cell::update(std::vector<Tile*> *tiles){
+// void Cell::update(uint8_t *pixels){
 
-}
+// }
 
-Resource::Resource(int x, int y, int width, int height, bool food):
-    Tile(x,y,width,height),
+Resource::Resource(int x, int y, bool food):
+    Thing(x,y),
     food(food){
+        if(food)
+            tiles.push_back(Tile(x, y, color));
 }
 
-void Resource::draw(uint8_t *pixels){
-    // filledCircleColor(renderer, x, y, width/2, 0xFF4DC274);
-    // if(food)
-        // boxColor(renderer, x, y, x + width, y + height, color);
+// void Resource::update(uint8_t *pixels){
+//     // filledCircleColor(renderer, x, y, width/2, 0xFF4DC274);
+//     // if(food)
+//         // boxColor(renderer, x, y, x + width, y + height, color);
         
-    // aacircleColor(renderer, x, y, width / 2, 0xFF4DC274);
-    // int i, j, c;
-    // int index = 0;
-    // for (i = 0; i < tilesX; i++) {
-        // for (j = 0; j < tilesY; j++) {
-            uint32_t col = food ? color : 0;
-            int index = x * 3 + (y * 3 * stg.map_width);
-            pixels[index++] = ((uint8_t*)&col)[0];
-            pixels[index++] = ((uint8_t*)&col)[1];
-            pixels[index++] = ((uint8_t*)&col)[2];        
-        // }
-    // }
+//     // aacircleColor(renderer, x, y, width / 2, 0xFF4DC274);
+//     // int i, j, c;
+//     // int index = 0;
+//     // for (i = 0; i < tilesX; i++) {
+//         // for (j = 0; j < tilesY; j++) {
+        
+//         // }
+//     // }
+// }
+
+Border::Border(int x, int y) : Thing(x, y){
+    tiles.push_back(Tile(x, y, color));
 }
 
-Border::Border(int x, int y, int width, int height):
-    Tile(x,y,width,height){
-}
-
-void Border::draw(uint8_t *pixels){
+void Border::update(uint8_t *pixels){
     // filledCircleColor(renderer, x, y, width/2, 0xFF4DC274);
     // boxColor(renderer, x, y, x + width, y + height, color);
         
@@ -149,28 +152,46 @@ void Border::draw(uint8_t *pixels){
     // int index = 0;
     // for (i = 0; i < tilesX; i++) {
         // for (j = 0; j < tilesY; j++) {
-            int index = x * 3 + (y * 3 * stg.map_width);
-            pixels[index++] = ((uint8_t*)&color)[0];
-            pixels[index++] = ((uint8_t*)&color)[1];
-            pixels[index++] = ((uint8_t*)&color)[2]; 
+            // int index = x * 3 + (y * 3 * stg.map_width);
+            // pixels[index++] = ((uint8_t*)&color)[0];
+            // pixels[index++] = ((uint8_t*)&color)[1];
+            // pixels[index++] = ((uint8_t*)&color)[2]; 
+        for(auto x : tiles){
+            x.update(pixels);
+        }
         // }
     // }
 }
 
-void Resource::update(std::vector<Tile*> *tiles){
-
+void Resource::update(uint8_t *pixels){
+    // if(food){
+    // int index = x * 3 + (y * 3 * stg.map_width);
+    // pixels[index++] = ((uint8_t*)&color)[0];
+    // pixels[index++] = ((uint8_t*)&color)[1];
+    // pixels[index++] = ((uint8_t*)&color)[2]; 
+    // }
+    if(food)
+        for(auto x : tiles){
+            x.update(pixels);
+        }
 }
 
-void Tile::draw(uint8_t *pixels){
-    
-}
+// void Tile::draw(uint8_t *pixels){
 
-void Tile::update(std::vector<Tile*> *tiles){
-    
+// }
+
+void Tile::update(uint8_t *pixels){
+    int index = x * 3 + (y * 3 * stg.map_width);
+    pixels[index++] = ((uint8_t*)&color)[0];
+    pixels[index++] = ((uint8_t*)&color)[1];
+    pixels[index++] = ((uint8_t*)&color)[2];
 }
-Tile::Tile(int x, int y, int width, int height):
+Tile::Tile(int x, int y, uint32_t color):
     x(x),
     y(y),
-    width(width),
-    height(height){
+    color(color){
+}
+Thing::Thing(int x, int y):
+x(x),
+y(y){    
 }
