@@ -13,6 +13,6 @@ class Level{
         SDL_Texture* gridTile;
         SDL_Renderer* renderer;
         std::vector<Tile*> tiles;
-        void draw();
+        void draw(uint8_t *pixels);
         void update();
 };

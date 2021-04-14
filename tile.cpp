@@ -1,6 +1,6 @@
 #include "tile.hpp"
 #include <iostream>
-
+extern int tilesX, tilesY;
 enum class mutationType {pSub, pIns, pDel, gInv, gDel};
 enum class TileType {Air, Food, Creature};
 
@@ -96,7 +96,7 @@ Cell::Cell(int x, int y, int width, int height, Creature *creature):
     Tile(x,y,width,height),
     creature(creature){
 }
-void Cell::draw(SDL_Renderer *renderer){
+void Cell::draw(uint8_t *pixels){
     // gTileTexture.render( mBox.x - camera.x, mBox.y - camera.y, &gTileClips[ mType ] );
 };
 
@@ -109,30 +109,51 @@ Resource::Resource(int x, int y, int width, int height, bool food):
     food(food){
 }
 
-void Resource::draw(SDL_Renderer *renderer){
+void Resource::draw(uint8_t *pixels){
     // filledCircleColor(renderer, x, y, width/2, 0xFF4DC274);
     // if(food)
         // boxColor(renderer, x, y, x + width, y + height, color);
         
     // aacircleColor(renderer, x, y, width / 2, 0xFF4DC274);
+    // int i, j, c;
+    // int index = 0;
+    // for (i = 0; i < tilesX; i++) {
+        // for (j = 0; j < tilesY; j++) {
+            uint32_t col = food ? color : 0;
+            int index = x * 3 + (y * 3 * 1024);
+            pixels[index++] = ((uint8_t*)&col)[0];
+            pixels[index++] = ((uint8_t*)&col)[1];
+            pixels[index++] = ((uint8_t*)&col)[2];        
+        // }
+    // }
 }
 
 Border::Border(int x, int y, int width, int height):
     Tile(x,y,width,height){
 }
 
-void Border::draw(SDL_Renderer *renderer){
+void Border::draw(uint8_t *pixels){
     // filledCircleColor(renderer, x, y, width/2, 0xFF4DC274);
     // boxColor(renderer, x, y, x + width, y + height, color);
         
     // aacircleColor(renderer, x, y, width / 2, 0xFF4DC274);
+    // int i, j, c;
+    // int index = 0;
+    // for (i = 0; i < tilesX; i++) {
+        // for (j = 0; j < tilesY; j++) {
+            int index = x * 3 + (y * 3 * 1024);
+            pixels[index++] = ((uint8_t*)&color)[0];
+            pixels[index++] = ((uint8_t*)&color)[1];
+            pixels[index++] = ((uint8_t*)&color)[2]; 
+        // }
+    // }
 }
 
 void Resource::update(std::vector<Tile*> *tiles){
 
 }
 
-void Tile::draw(SDL_Renderer *renderer){
+void Tile::draw(uint8_t *pixels){
     
 }
 

@@ -76,14 +76,21 @@ static std::string read_shader_file
 // an example of something we will control from the javascript side
 bool background_is_black = true;
 
-void handleEvents(float *zoomPhysics, v2d *panPhysics){
+void handleEvents(float *zoomPhysics, v2d *panPhysics, float scaleClipStart, float scaleClipEnd){
     SDL_Event event;
     while( SDL_PollEvent( &event ) ){
     // std::cout << event.type << '\n';
         switch (event.type){
             case SDL_MOUSEWHEEL:
                 // stg.scale += event.wheel.y > 0 ? (float)event.wheel.y / 2000.0f : (float)event.wheel.y / 2000.0f;
-                zoomPhysics[0] += ((float)event.wheel.y / 16000.0f);
+                // zoomPhysics[0] += zoomPhysics[2] > scaleClipEnd || zoomPhysics[2] < scaleClipStart ? copysign(1.0, event.wheel.y) * 0.001 * -1.0 : ((float)event.wheel.y / 16000.0f);
+                // if(zoomPhysics[2] > scaleClipEnd || zoomPhysics[2] < scaleClipStart){
+                //     zoomPhysics[0] = 0;
+                //     zoomPhysics[1] = 0;
+                //     zoomPhysics[2] += copysign(1.0, event.wheel.y) * 10;
+                // }
+                // else
+                    zoomPhysics[0] += ((float)event.wheel.y / 16000.0f);
                 break;
             case SDL_MULTIGESTURE:
                 zoomPhysics[0] += ((float)event.mgesture.dDist / 10);
@@ -106,17 +113,45 @@ void handleEvents(float *zoomPhysics, v2d *panPhysics){
 }
 template <class vecT>
 vecT* processPhysics(vecT *physics, vecT drag, vecT clipStart, vecT clipEnd){
+
+    // Clip Position
+    // if(physics[2] > clipEnd){
+    //     physics[0] = clipEnd * 0;
+    //     physics[1] = clipEnd * 0;
+    //     physics[2] = clipEnd;
+    // }
+    // else if(physics[2] < clipStart){
+    //     physics[0] = clipStart * 0;
+    //     physics[1] = clipStart * 0;
+    //     physics[2] = clipStart;
+    // }
+    // else{
+    vecT temp = physics[2];
     physics[1] += physics[0];
     physics[0] /= drag;
 
-    // Clip Position
-    physics[2] = physics[2] > clipEnd ? clipEnd : physics[2];
-    physics[2] = physics[2] < clipStart ? clipStart : physics[2];
-
     // pos += vel
+    physics[2] = physics[2] > clipEnd ? clipEnd : physics[2];
     vecT adjVel = physics[1] * physics[2];
     physics[2] += adjVel;
     physics[1] /= drag;
+    // if(physics[2] > clipEnd){
+    //     physics[0] = physics[2] * 0;
+    //     physics[1] = physics[2] * 0;
+    //     physics[2] = clipEnd;
+    // }
+    // physics[2] = physics[2] < clipStart ? clipStart : physics[2];
+    if(physics[2] < clipStart){
+        physics[0] = physics[2] * 0;
+        physics[1] = physics[2] * 0;
+        physics[2] = clipStart;
+    }
+    // if(physics[2] < clipStart){
+    //     physics[0] = physics[2] * 0;
+    //     physics[1] = physics[2] * 0;
+    //     physics[2] = temp;
+    // }
+    // std::cout << physics[2] << '\n';
     return physics;
 }
 // the function called by the javascript code
@@ -160,7 +195,7 @@ void drawTiles2(){
     constexpr int tilesX = ipow(2, power);
     constexpr int tilesY = ipow(2, power);
 
-    auto pixels = new GLubyte[tilesX*tilesY*3];
+    // auto pixels = new GLubyte[tilesX*tilesY*3];
     //auto pixels = new GLubyte[tilesX*tilesY*3];
     // GLubyte*** pixels = new GLubyte**[tilesX];
     // for(int i = 0; i < tilesX; ++i)
@@ -169,26 +204,7 @@ void drawTiles2(){
         // pixels[i][0][1] = (GLubyte) i%255;
         // pixels[i][0][2] = (GLubyte) i%255;
     // auto pixels = new GLubyte[tilesX * tilesY * 3];
-       int i, j, c;
-
-   int index = 0;
-   for (i = 0; i < tilesX; i++) {
-      for (j = 0; j < tilesY; j++) {
-        //  pixels[index++] = (GLubyte) i%2*255;
-        //  pixels[index++] = (GLubyte) (i+1)%2*255;
-        //  pixels[index++] = (GLubyte) i*j%2*255;
-        pixels[index++] = i < 5 && j < 5 ? 255 : 0;
-        pixels[index++] = i < 5 && j < 5 ? 255 : 0;
-        pixels[index++] = i < 5 && j < 5 ? 255 : 0;        
-        //  pixels[i*tilesY+j*3] = (GLubyte) i%255;
-        //  pixels[i*tilesY+j*3+1] = (GLubyte) i-j%255;
-        //  pixels[i*tilesY+j*3+2] = (GLubyte) i%255;
-        // pixels[i][j][2] = j > tilesY ? 100 : 50;
-        // *(pixels + i*tilesY + j) = i%255;
-        // *(pixels + i*tilesY + j + 1) = i - j%255;
-        // *(pixels + i*tilesY + j + 2) = i % 255;
-      }
-   }
+       
     // std::cout << (int)pixels[2][2][2] << '\n';
     GLuint textureID;
     glGenTextures(1, &textureID);
@@ -213,13 +229,13 @@ void drawTiles2(){
         glUniform2f(uniform_tileDims, tilesX, tilesY);
     GLint uniform_texture = glGetUniformLocation(tiles2Program, "texture");
         glUniform1i(uniform_texture, 0);
-    std::cout << stg.scale << '\n';
+    // std::cout << stg.scale << '\n';
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 6);
     // for (int i = 0; i < tilesX; ++i)
     // {
     //     delete[](pixels[i]);
     // }
-    delete[] pixels;
+    // delete[] pixels;
     
     glDeleteTextures(1, &textureID);
 } 

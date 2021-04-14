@@ -8,12 +8,11 @@ Level *lvl;
 // extern auto tiles2Program();
 
 void main_loop() { 
-    handleEvents(zoomPhysics, panPhysics);
+    handleEvents(zoomPhysics, panPhysics, 1.0f, 50.0f);
 
     // Calculate zoom and pan
     stg.scale = processPhysics <float> (zoomPhysics, 1.1f, 1.0f, 50)[2];
     offset = processPhysics <v2d> (panPhysics, {1.1,1.1}, {0,0}, {-50000,-50000})[2];
-    std::cout << offset.x << '\n';
 
     // Set canvas size and buffer the vertices for the quad
     setCanvas();
@@ -22,8 +21,11 @@ void main_loop() {
     // Clear the screen
     glClearColor(0.086f, 0.086f, 0.086f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
-
+    // pixels = new GLubyte[tilesX*tilesY*3];
+    std::cout << offset.x << '\n';
+    lvl->draw(pixels);
     drawTiles2();
+    // delete[] pixels;
     if(stg.scale > 20)
         drawGrid();
 
@@ -69,6 +71,7 @@ int main()
             (rand() % 16) == 15
         ));
     }
+    std::cout << lvl->tiles[144]->x << '\n';
 
     emscripten_set_main_loop(main_loop, 0, true);
 

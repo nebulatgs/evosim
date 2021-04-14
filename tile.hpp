@@ -34,7 +34,7 @@ class Species : public Organism{
 class Tile{
     public:
         Tile(int x, int y, int width, int height);
-        virtual void draw(SDL_Renderer *renderer);
+        virtual void draw(uint8_t *pixels);
         virtual void update(std::vector<Tile*> *tiles);
         int x, y;
         int width, height;
@@ -64,7 +64,7 @@ class Creature : public Organism{
 // A type of tile inhabited by a creature
 class Cell : public Tile{
     Cell(int x, int y, int width, int height, Creature *creature);
-    void draw(SDL_Renderer *renderer);
+    void draw(uint8_t *pixels);
     void update(std::vector<Tile*> *tiles);
     Creature *creature;
 };
@@ -72,7 +72,7 @@ class Cell : public Tile{
 class Resource : public Tile{
     public:
         Resource(int x, int y, int width, int height, bool food);
-        void draw(SDL_Renderer *renderer);
+        void draw(uint8_t *pixels);
         void update(std::vector<Tile*> *tiles);
         bool food;
         uint32_t color = 0xFF6E9055;
@@ -81,6 +81,6 @@ class Resource : public Tile{
 class Border : public Tile{
     public:
         Border(int x, int y, int width, int height);
-        void draw(SDL_Renderer *renderer);
+        void draw(uint8_t *pixels);
         uint32_t color = 0xFF926E5F;
 };
