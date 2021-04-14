@@ -3,10 +3,7 @@
 // #include <SDL_opengles2.h>
 #include <SDL.h>
 // extern GLubyte* pixels;
-Level::Level(SDL_Renderer *_renderer, uint16_t _tilesX, uint16_t _tilesY, uint16_t _tileW, uint16_t _tileH, uint8_t strokeWidth, uint32_t color) :
-    renderer(_renderer), tilesX(_tilesX), tilesY(_tilesY), tileW(_tileW), tileH(_tileH), strokeWidth(strokeWidth), color(color){
-        // things.reserve(tilesX * tilesY);
-    }
+// Level::Level(){}
 
 
 
@@ -29,6 +26,6 @@ Level::Level(SDL_Renderer *_renderer, uint16_t _tilesX, uint16_t _tilesY, uint16
 // }
 void Level::update(uint8_t *pixels){
     for(auto x : things){
-        x -> update(pixels);
+        x -> update(pixels, this);
     }
 }

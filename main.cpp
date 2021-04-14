@@ -55,9 +55,7 @@ void main_loop() {
     SDL_GL_SwapWindow(window);
 }
 
-bool randDensity(int number){
-    return (rand() % number) == number/2;
-}
+
 
 int main()
 {
@@ -80,7 +78,7 @@ int main()
         {{{2}, 3}}
     });
     Grid grid = Grid(stg.map_width, stg.map_height, stg);
-    lvl = new Level(nullptr, grid.xDivs, grid.yDivs, grid.tWidth, grid.tHeight, 1 / stg.scale * 3, 0xFF434343);
+    lvl = new Level();
 
     // Push food cells
     for(int i = 0; i < grid.xDivs * grid.yDivs; i++){
@@ -98,6 +96,12 @@ int main()
             x,
             y,
             1
+        ));}
+        if(randDensity(2000)){
+        lvl->things.push_back(new Creature(
+            x,
+            y,
+            0
         ));}
     }
     std::cout << lvl->things[14]->x << '\n';

@@ -22,6 +22,10 @@ GLuint gridProgram, tilesProgram, tiles2Program;
 SDL_Window *window;
 std::list<float> frameAvg;
 
+bool randDensity(int number){
+    return (rand() % number) == number/2;
+}
+
 
 constexpr int64_t ipow(int64_t base, int exp, int64_t result = 1) {
   return exp < 1 ? result : ipow(base*base, exp/2, (exp % 2) ? result*base : result);
@@ -41,7 +45,7 @@ Settings stg = {
     0, 0, // Screen Dimensions (init to zero, set later)
     tilesX, tilesY, // Map Dimensions
     0, // Scale
-    1.5f  // Drag Factor
+    1.3f  // Drag Factor
 };
 struct Grid{
     Grid(Grid _src, Settings _stg):

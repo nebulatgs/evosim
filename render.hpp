@@ -102,7 +102,7 @@ void handleEvents(float *zoomPhysics, v2d *panPhysics, float scaleClipStart, flo
                     zoomPhysics[0] += ((float)event.wheel.y / 20000.0f);
                 break;
             case SDL_MULTIGESTURE:
-                zoomPhysics[0] += ((float)event.mgesture.dDist / 10);
+                zoomPhysics[0] += ((float)event.mgesture.dDist / 4);
                 break;
             case SDL_MOUSEBUTTONDOWN:
                 isMouseDown = true;

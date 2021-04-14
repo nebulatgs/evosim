@@ -10,7 +10,7 @@ struct Gene{
     std::vector<uint8_t> bases;
     std::string toString();
 };
-
+class Level;
 
 // Represents a single tile on the world grid
 class Tile{
@@ -26,12 +26,14 @@ class Tile{
 
 class Thing{
     public:
-        Thing(int x, int y);
+        Thing(int x, int y, TileType type);
+        void randomize();
         int x;
         int y;
         uint32_t color;
+        TileType type;
         std::vector<Tile> tiles;
-        virtual void update(uint8_t *pixels);
+        virtual void update(uint8_t *pixels, Level* lvl);
 };
 
 class Creature : public Thing{
@@ -42,6 +44,9 @@ class Creature : public Thing{
 
         int transcribeIndex;
         std::vector<int> transcribedProteins;
+        int distance = RAND_MAX;
+        Thing *closest_food = nullptr;
+        bool found_food = false;
 
     protected:
         uint32_t geneIndex;
@@ -50,11 +55,12 @@ class Creature : public Thing{
         std::vector<Gene> genome;
         int mutate(int count, mutationType mutation);
         Creature(int x, int y, int species);
-        void update(uint8_t *pixels);
+        void update(uint8_t *pixels, Level* lvl);
         int readNext();
         void reset();
         int species;
-        uint32_t size;        
+        uint32_t size;
+        uint32_t color = 0x3C4CE7;
 };
 
 
@@ -64,7 +70,8 @@ class Resource : public Thing{
     public:
         Resource(int x, int y, bool food);
         // void draw(uint8_t *pixels);
-        void update(uint8_t *pixels);
+        void update(uint8_t *pixels, Level* lvl);
+        void randomize();
         bool food;
         uint32_t color = 0xFF6E9055;
 };
@@ -72,6 +79,6 @@ class Resource : public Thing{
 class Border : public Thing{
     public:
         Border(int x, int y);
-        void update(uint8_t *pixels);
+        void update(uint8_t *pixels, Level* lvl);
         uint32_t color = 0xFF926E5F;
 };
