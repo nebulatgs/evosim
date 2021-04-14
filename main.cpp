@@ -15,9 +15,19 @@ Level *lvl;
 float listAvg(const std::list<float> &list){
     std::accumulate(list.begin(), list.end(), 0.0f) / list.size();
 }
-
+uint64_t startTime, endTime;
 void main_loop() { 
-    uint64_t startTime = SDL_GetPerformanceCounter();
+    endTime = SDL_GetPerformanceCounter();
+    float elapsed = (endTime - startTime) / (float)SDL_GetPerformanceFrequency();
+    frameAvg.push_back(1.0f/elapsed);
+    if(frameAvg.size() > 20)
+        frameAvg.pop_front();
+    float sum = 0;
+    for(auto x : frameAvg){
+        sum += x;
+    }
+    std::cout << "Current FPS: " << std::to_string((int)round(sum/20.0f)) << '\n';
+    startTime = SDL_GetPerformanceCounter();
     handleEvents(zoomPhysics, panPhysics, 1.0f, 50.0f);
 
     // Calculate zoom and pan
@@ -43,16 +53,6 @@ void main_loop() {
         drawGrid();
 
     SDL_GL_SwapWindow(window);
-    uint64_t endTime = SDL_GetPerformanceCounter();
-    float elapsed = (endTime - startTime) / (float)SDL_GetPerformanceFrequency();
-    frameAvg.push_back(1.0f/elapsed);
-    if(frameAvg.size() > 20)
-        frameAvg.pop_front();
-    float sum = 0;
-    for(auto x : frameAvg){
-        sum += x;
-    }
-    std::cout << "Current FPS: " << std::to_string((int)round(sum/20.0f)) << '\n';
 }
 
 bool randDensity(int number){
@@ -70,6 +70,7 @@ int main()
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+    SDL_GL_SetSwapInterval(1);
     
     initGL(window);
 
@@ -101,7 +102,7 @@ int main()
     }
     std::cout << lvl->things[14]->x << '\n';
 
-    emscripten_set_main_loop(main_loop, 0, true);
+    emscripten_set_main_loop(main_loop, -1, true);
 
     return EXIT_SUCCESS;
 }
