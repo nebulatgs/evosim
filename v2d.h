@@ -1,14 +1,17 @@
-float randMapped() {
-    return(static_cast <float> (rand()) / static_cast <float> (RAND_MAX));
-}
+#pragma once
 
-float inv_sqrt(float x)
-{ union { float f; uint32_t u; } y = {x};
-  y.u = 0x5F1FFFF9ul - (y.u >> 1);
-  return 0.703952253f * y.f * (2.38924456f - x * y.f * y.f);
-}
 
-struct v2d {
+class v2d {
+    private:
+        float inv_sqrt(float x)
+            { union { float f; uint32_t u; } y = {x};
+            y.u = 0x5F1FFFF9ul - (y.u >> 1);
+            return 0.703952253f * y.f * (2.38924456f - x * y.f * y.f);
+            }
+        float randMapped() {
+            return(static_cast <float> (rand()) / static_cast <float> (RAND_MAX));
+        }
+    public:
     //Create an empty vector
     v2d() { x = 0.0f; y = 0.0f; }
     //Create a vector from _x and _y

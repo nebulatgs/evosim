@@ -1,10 +1,12 @@
 #include <vector>
 #include <string>
 #include <stdint.h>
+#include "v2d.h"
 #pragma once
 
 enum class mutationType;
 enum class TileType;
+// class v2d;
 class SDL_Renderer;
 struct Gene{
     std::vector<uint8_t> bases;
@@ -28,8 +30,9 @@ class Thing{
     public:
         Thing(int x, int y, TileType type);
         void randomize();
-        int x;
-        int y;
+        // int x;
+        // int y;
+        v2d pos;
         uint32_t color;
         TileType type;
         std::vector<Tile> tiles;
@@ -44,9 +47,10 @@ class Creature : public Thing{
 
         int transcribeIndex;
         std::vector<int> transcribedProteins;
-        int distance = RAND_MAX;
+        // int distance = RAND_MAX;
         Thing *closest_food = nullptr;
         bool found_food = false;
+        v2d distance = v2d(999999,999999);
 
     protected:
         uint32_t geneIndex;

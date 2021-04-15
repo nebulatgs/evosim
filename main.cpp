@@ -26,7 +26,7 @@ void main_loop() {
     for(auto x : frameAvg){
         sum += x;
     }
-    std::cout << "Current FPS: " << std::to_string((int)round(sum/20.0f)) << '\n';
+    // std::cout << "Current FPS: " << std::to_string((int)round(sum/20.0f)) << '\n';
     startTime = SDL_GetPerformanceCounter();
     handleEvents(zoomPhysics, panPhysics, 1.0f, 50.0f);
 
@@ -91,20 +91,20 @@ int main()
             ));
             continue;
         }
-        if(randDensity(1000)){
+        if(randDensity(2000)){
         lvl->things.push_back(new Resource(
             x,
             y,
             1
         ));}
-        if(randDensity(1000)){
+        if(randDensity(100000)){
         lvl->things.push_back(new Creature(
             x,
             y,
             0
         ));}
     }
-    std::cout << lvl->things[14]->x << '\n';
+    // std::cout << lvl->things[14]->x << '\n';
 
     emscripten_set_main_loop(main_loop, -1, true);
 

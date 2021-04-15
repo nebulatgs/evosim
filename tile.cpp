@@ -61,7 +61,7 @@ extern bool randDensity(int number);
 
 Creature::Creature(int x, int y, int species) : Thing(x, y, TileType::Creature), species(species), size(1){
     // genome = ecosystem[species];
-    tiles.push_back(Tile(x, y, color));
+    tiles.push_back(Tile(pos.x, pos.y, color));
 }
 int Creature::readNext(){
     std::string key = genome[geneIndex].toString();
@@ -80,12 +80,14 @@ bool Creature::update(uint8_t *pixels, Level* lvl){
     if(!found_food){
         for(auto thing : lvl->things){
             if(thing->type == TileType::Resource){
-                if (x == thing->x && y == thing->y){
+                if (pos.x == thing->pos.x && pos.y == thing->pos.y){
                     // thing->randomize();
                     return 0;
                 }
-                int dist = abs(sqrt((x - thing->x) * (x - thing->x) + (y - thing->y) * (y - thing->y)));
-                if(dist < distance && (thing->x - x== thing->y -y || thing->x - x ==0 || thing->y -y ==0)){
+                // int dist = abs(sqrt((pos.x - thing->pos.x) * (pos.x - thing->pos.x) + (pos.y - thing->pos.y) * (pos.y - thing->pos.y)));
+                v2d dist = pos - thing->pos;
+                // && (thing->pos.x - pos.x== thing->pos.y -pos.y || thing->pos.x - pos.x ==0 || thing->pos.y -pos.y ==0)
+                if(dist < distance){
                     distance = dist;
                     closest_food = thing;
                 }
@@ -93,16 +95,30 @@ bool Creature::update(uint8_t *pixels, Level* lvl){
             }
         }
         found_food = closest_food != nullptr;
-        std::cout << closest_food->x << '\n';
+        std::cout << closest_food->pos.x << '\n';
     }
-    
-    int tempX = (closest_food->x - x > 0 ? 1 : -1);
-    x +=  (tempX + x) < stg.map_width && (tempX + x) > 0 ? tempX : 0;
+    v2d dist = closest_food->pos - pos;
+    dist.setLen(1);
+    // int tempX = (closest_food->pos.x - pos.x > 0 ? 1 : -1);
+    float tempX = dist.x, tempY = dist.y;
+    pos.x +=  (tempX + pos.x) < stg.map_width && (tempX + pos.x) > 0 ? tempX : 0;
 
-    int tempY = (closest_food->y - y > 0 ? 1 : -1);
-    y +=  (tempY + y)< stg.map_height && (tempY + y)> 0 ? tempY : 0;
+    // int tempY = (closest_food->pos.y - pos.y > 0 ? 1 : -1);
+    pos.y +=  (tempY + pos.y)< stg.map_height && (tempY + pos.y)> 0 ? tempY : 0;
     energy -= 1;
-    if(x == closest_food->x && y == closest_food->y){
+    if(energy > 400){
+        energy -= 200;
+        lvl->things.push_back(new Creature(pos.x, pos.y+1, species));
+        Creature* newCell = (Creature*)(lvl->things.back());
+        newCell->closest_food = nullptr;
+        newCell->found_food = 0; 
+    }
+    // int index = (int)pos.x * 3 + ((int)pos.y * 3 * stg.map_width);
+    // uint8_t col[3] = {pixels[index++], pixels[index++], pixels[index++]};
+    // uint32_t myColor = *((uint32_t*)col);
+    // std::cout << myColor << '\n';
+    // if((int)pos.x == (int)closest_food->pos.x && (int)pos.y == (int)closest_food->pos.y || myColor == 0xFF6E9055){
+    if(abs(pos.x - closest_food->pos.x) <= 1 && abs(pos.y - closest_food->pos.y) <= 1){
         closest_food->randomize();
         found_food = false;
         energy += 500;
@@ -111,8 +127,8 @@ bool Creature::update(uint8_t *pixels, Level* lvl){
             // x = !(bool)(rand() % 50) ? (rand() % stg.map_width) : x;
             // y += 1;
             // randomize();
-            tile.x = x;
-            tile.y = y;
+            tile.x = pos.x;
+            tile.y = pos.y;
             tile.update(pixels);
     }
     return !energy;
@@ -136,8 +152,8 @@ bool Border::update(uint8_t *pixels, Level* lvl){
     return 0;
 }
 void Thing::randomize(){
-    x = (rand() % (stg.map_width - 2)) + 1;
-    y = (rand() % (stg.map_height - 2)) + 1;
+    pos.x = (rand() % (stg.map_width - 2)) + 1;
+    pos.y = (rand() % (stg.map_height - 2)) + 1;
 }
 bool Resource::update(uint8_t *pixels, Level* lvl){
     if(food)
@@ -145,8 +161,8 @@ bool Resource::update(uint8_t *pixels, Level* lvl){
             // x = !(bool)(rand() % 50) ? (rand() % stg.map_width) : x;
             // y += 1;
             // randomize();
-            tile.x = x;
-            tile.y = y;
+            tile.x = pos.x;
+            tile.y = pos.y;
             tile.update(pixels);
         }
         return 0;
@@ -164,7 +180,9 @@ Tile::Tile(int x, int y, uint32_t color):
     color(color){
 }
 Thing::Thing(int x, int y, TileType type):
-x(x),
-y(y),
+// x(x),
+// y(y),
 type(type){    
+    pos.x = x;
+    pos.y = y;
 }
