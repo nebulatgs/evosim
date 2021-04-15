@@ -3,6 +3,7 @@
 #define GL_GLEXT_PROTOTYPES 1
 #include "level.hpp"
 #include "render.hpp"
+#include <unistd.h>
 Level *lvl;
 v2d cursor = v2d(0,0);
 // float CalculateAvg(const std::list<float> &list)
@@ -31,6 +32,18 @@ void changeSaturation(double *R, double *G, double *B, double change) {
   *G=P+((*G)-P)*change;
   *B=P+((*B)-P)*change; }
 extern "C" void EMSCRIPTEN_KEEPALIVE setFade(bool fade) { stg.trails = fade; }
+extern "C" void EMSCRIPTEN_KEEPALIVE setSpeed(float speed) { stg.speed = speed; std::cout << stg.speed << '\n';}
+
+int main();
+
+extern "C" void EMSCRIPTEN_KEEPALIVE restart(){
+    emscripten_cancel_main_loop();
+    memset(pixels, 0, stg.map_height * stg.map_width * 3);
+    delete[] pixels;
+    pixels = nullptr;
+    delete lvl;
+    main();
+}
 
 void main_loop() { 
     endTime = SDL_GetPerformanceCounter();
@@ -58,7 +71,7 @@ void main_loop() {
     temp.y = stg.map_height - temp.y;
     temp.y /= stg.map_height/2;
     temp.y +=2;
-    std::cout << temp.y << '\n';
+    // std::cout << temp.y << '\n';
     offset += v2d(stg.map_width/2, stg.map_height/2) * v2d(stg.scale -1, stg.scale - 1) * temp;
 
     offset.x = offset.x > clipEnd.x ? clipEnd.x : offset.x;
@@ -96,6 +109,8 @@ void main_loop() {
         drawGrid();
 
     SDL_GL_SwapWindow(window);
+    // emscripten_sleep(stg.sleep);
+    // usleep(stg.sleep * 1000);
 }
 
 

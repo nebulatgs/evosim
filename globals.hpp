@@ -59,13 +59,15 @@ struct Settings{
     // uint16_t init_width, init_height;
     float scale, drag;
     bool trails;
+    float speed;
 };
 Settings stg = {
     0, 0, // Screen Dimensions (init to zero, set later)
     0, 0, // Map Dimensions
     0, // Scale
     1.3f, // Drag Factor
-    false
+    false,
+    1
 };
 struct Grid{
     Grid(Grid _src, Settings _stg):

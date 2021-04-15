@@ -35,3 +35,11 @@ void Level::update(uint8_t *pixels){
     }
     // std::cout << (int)things.size() << '\n';
 }
+
+Level::~Level(){
+    for(auto thing : things){
+        delete thing;
+        thing = nullptr;
+    }
+    things.empty();
+}

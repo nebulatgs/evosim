@@ -29,6 +29,7 @@ class Tile{
 class Thing{
     public:
         Thing(int x, int y, TileType type);
+        ~Thing();
         void randomize();
         // int x;
         // int y;
@@ -60,6 +61,7 @@ class Creature : public Thing{
         std::vector<Gene> genome;
         int mutate(int count, mutationType mutation);
         Creature(int x, int y, int species);
+        ~Creature();
         bool update(uint8_t *pixels, Level* lvl);
         int readNext();
         void reset();

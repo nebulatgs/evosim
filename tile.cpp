@@ -16,9 +16,11 @@ class Level{
 struct Settings{
     uint16_t screen_width, screen_height;
     const uint16_t map_width, map_height;
-    const uint16_t tilesX, tilesY;
-    uint16_t init_width, init_height;
+    // const uint16_t tilesX, tilesY;
+    // uint16_t init_width, init_height;
     float scale, drag;
+    bool trails;
+    float sleep;
 };
 extern Settings stg;
 // Contains a vector of bases which are read 3 at a time (ex. ACG) to form proteins
@@ -99,14 +101,15 @@ bool Creature::update(uint8_t *pixels, Level* lvl){
         // std::cout << closest_food->pos.x << '\n';
     }
     v2d dist = closest_food->pos - pos;
-    dist.setLen(0.5);
+    dist.setLen(0.5 * stg.sleep);
     // int tempX = (closest_food->pos.x - pos.x > 0 ? 1 : -1);
     float tempX = dist.x, tempY = dist.y;
     pos.x +=  (tempX + pos.x) < stg.map_width && (tempX + pos.x) > 0 ? tempX : 0;
 
     // int tempY = (closest_food->pos.y - pos.y > 0 ? 1 : -1);
     pos.y +=  (tempY + pos.y)< stg.map_height && (tempY + pos.y)> 0 ? tempY : 0;
-    energy -= 1;
+    energy -= 1 * stg.sleep;
+    // std::cout << stg.sleep << '\n';
     if(energy > 400){
         energy -= 200;
         lvl->things.push_back(new Creature(pos.x, pos.y+1, species));
@@ -191,4 +194,14 @@ Thing::Thing(int x, int y, TileType type):
 type(type){    
     pos.x = x;
     pos.y = y;
+}
+
+Thing::~Thing(){
+    tiles.empty();
+}
+
+Creature::~Creature(){
+    tiles.empty();
+    transcribedProteins.empty();
+    genome.empty();
 }

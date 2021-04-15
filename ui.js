@@ -5,3 +5,7 @@ function toggleFade(checkboxElem) {
       _setFade(false);
     }
   }
+
+function changeSpeed(slider) {
+  _setSpeed(slider.value);
+}

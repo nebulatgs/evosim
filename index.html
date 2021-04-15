@@ -46,7 +46,7 @@
 			</div>
 
 			<div class="resetters">
-				<button @click="restart">restart simulation</button>
+				<button @click="restart" onclick="_restart()">restart simulation</button>
 				<button @click="reset">reset settings</button>
 			</div>
 
@@ -54,7 +54,14 @@
                 <br>
 				<input type="checkbox" id="fade" v-model="fade" onchange="toggleFade(this)">
 				<label for="fade"> fade trails</label>
+                
 			</div>
+            <div>
+                <br>
+                <p>speed:</p>
+                <input type="range" min="0" max="2" step="0.01" v-model="ralignment" onchange="changeSpeed(this)">
+
+            </div>
 
     </div>
 
