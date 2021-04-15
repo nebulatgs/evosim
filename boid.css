@@ -1,0 +1,266 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:400,700&display=swap');
+
+* {
+	margin: 0;
+	padding: 0;
+	user-select: none;
+	box-sizing: border-box;
+}
+
+html {
+	width: 100%;
+
+	font-size: 16px;
+	font-family: "Open Sans", Helvetica, Arial, sans-serif;
+	color: #eee;
+
+	margin-bottom: 40px;
+
+	overflow: hidden;
+}
+
+
+
+/* #container :last-child {
+	margin-bottom: 30px;
+} */
+
+/* webkit scrollbar */
+::-webkit-scrollbar {
+	width: 10px;
+}
+::-webkit-scrollbar-track {
+	background: #0004; 
+}
+::-webkit-scrollbar-thumb {
+	background: #fff4; 
+}
+::-webkit-scrollbar-thumb:hover {
+	background: #fff3; 
+}
+
+.hidden {
+	transition: transform 0.5s;
+	transform: translateX(100%);
+}
+
+h3 {
+	font-size: 1.6em;
+	margin-bottom: 12px;
+	margin-top: 20px;
+}
+h4 {
+	font-size: 1.3em;
+	margin-bottom: 0;
+	margin-top: 10px;
+}
+h5 {
+	font-size: 1.1em;
+	margin-bottom: 5px;
+	margin-top: 10px;
+}
+
+canvas {
+	display: block;
+	margin: 0 auto;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	z-index: -1;
+}
+
+p {
+	display: block;
+	margin: 10px auto 0 auto !important;
+}
+
+select {
+	display: block;
+	padding: 5px 0;
+}
+
+/* slider css */
+
+input[type="range"] {
+	-webkit-appearance: none;
+	width: 50%;
+	height: 8px;
+	background: #0008;
+	outline: none;
+	transition: background 0.2s;
+}
+
+input[type="range"]:hover {
+	background: #fff2;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	appearance: none;
+	width: 16px;
+	height: 16px;
+	background: #fff8;
+	border: 0;
+	border-radius: 0;
+	transition: background 0.2s;
+}
+input[type="range"]::-webkit-slider-thumb:hover {
+	background: #fffb;
+}
+
+input[type="range"]::-moz-range-thumb {
+	width: 16px;
+	height: 16px;
+	background: #fff8;
+	transition: background 0.2s;
+	border: 0;
+	border-radius: 0;
+}
+input[type="range"]::-moz-range-thumb:hover {
+	background: #fffb;
+}
+
+/* checkbox css */
+
+input[type="checkbox"] {
+	opacity: 0;
+}
+
+label::before{
+	content: "";
+	display: inline-block;
+	
+	height: 16px;
+	width: 16px;
+	
+	background: #0008;
+	transition: background 0.2s;
+
+	position: absolute;
+	top: 3px;
+	left: -20px;
+}
+input[type="checkbox"]:hover + label::before {
+	background: #fff2;
+}
+
+label::after {
+	content: "";
+	display: inline-block;
+	height: 3px;
+	width: 9px;
+	border-left: 2px solid;
+	border-bottom: 2px solid;
+	border-color: #fff8;
+	
+	transform: rotate(-45deg);
+	transition: opacity 0.1s, border-color 0.2s;
+	opacity: 0;
+
+	position: absolute;
+	left: -17px;
+	top: 7px;
+}
+input[type="checkbox"]:checked + label::after {
+	opacity: 1;
+}
+input[type="checkbox"]:hover + label::after {
+	border-color: #fffb;
+}
+
+label {
+	position: relative;
+}
+
+/* pause button */
+
+#pauser input[type="checkbox"] {
+	height: 36px;
+	display: inline-block;
+}
+
+#pauser label::before{
+	height: 36px;
+	width: 36px;
+
+	top: -12px;
+	left: -13px;
+}
+
+#pauser label::after {
+	height: 24px;
+	width: 20px;
+	border-right: 6px solid;
+	border-left: 6px solid;
+	border-bottom: none;
+	border-top: none;
+	border-color: #fff8;
+	left: -5px;
+	top: -6px;
+
+	transform: rotate(0);
+
+	transition: all 0.1s, border-color 0.2s;
+
+	opacity: 1;
+	box-sizing: border-box;
+}
+#pauser input[type="checkbox"]:checked + label::after {
+	height: 24px;
+	width: 8px;
+	border-right: 0px solid transparent;
+	border-left: 16px solid #fff8;
+	border-bottom: 12px solid transparent;
+	border-top: 12px solid transparent;
+	left: -2px;
+}
+
+/* button css */
+
+button {
+	display: block;
+	margin-top: 10px;
+	padding: 10px;
+	font-size: 16px;
+	font-family: "Open Sans", Helvetica, Arial, sans-serif;
+	color: #eee;
+	border: 2px solid #0008;
+	border-radius: 0;
+	background: #0008;
+	transition: background 0.1s;
+}
+button:hover {
+	background: #fff2;
+}
+button:active {
+	background: #fff4;
+}
+
+button.copied {
+	border: 2px solid #0ff4;
+}
+
+.resetters * {
+	float: left;
+	margin-right: 10px;
+}
+
+.resetters::after {
+	content: "";
+	clear: both;
+	display: table;
+}
+
+/* nexter */
+
+.nexter {
+	position: relative;
+	right: 0;
+	float: right;
+	top: -4px;
+	display: none;
+}
+
+input[type="checkbox"]:checked + label + .nexter {
+	display: block;
+}

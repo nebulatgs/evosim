@@ -16,6 +16,22 @@ float listAvg(const std::list<float> &list){
     std::accumulate(list.begin(), list.end(), 0.0f) / list.size();
 }
 uint64_t startTime, endTime;
+
+#define  Pr  .299
+#define  Pg  .587
+#define  Pb  .114
+void changeSaturation(double *R, double *G, double *B, double change) {
+
+  double  P=sqrt(
+  (*R)*(*R)*Pr+
+  (*G)*(*G)*Pg+
+  (*B)*(*B)*Pb ) ;
+
+  *R=P+((*R)-P)*change;
+  *G=P+((*G)-P)*change;
+  *B=P+((*B)-P)*change; }
+extern "C" void EMSCRIPTEN_KEEPALIVE setFade(bool fade) { stg.trails = fade; }
+
 void main_loop() { 
     endTime = SDL_GetPerformanceCounter();
     float elapsed = (endTime - startTime) / (float)SDL_GetPerformanceFrequency();
@@ -63,7 +79,16 @@ void main_loop() {
     glClear(GL_COLOR_BUFFER_BIT);
 
     // std::cout << offset.x << '\n';
-    memset(pixels, 0, stg.map_height * stg.map_width * 3);
+    if(!stg.trails)
+        memset(pixels, 0, stg.map_height * stg.map_width * 3);
+    else{
+        for (int i = 0; i < stg.map_height * stg.map_width * 3; i+=3){
+            pixels[i] = pixels[i] <= 0x27 ? 0 : pixels[i] - 1;
+            pixels[i+1] = pixels[i+1] <= 0x27 ? 0 : pixels[i+1] - 1;
+            pixels[i+2] = pixels[i+2] <= 0x27 ? 0 : pixels[i+2] - 1;
+        }
+    }
+    
     lvl->update(pixels);
     drawTiles2();
 

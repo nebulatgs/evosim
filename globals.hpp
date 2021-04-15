@@ -58,12 +58,14 @@ struct Settings{
     // const uint16_t tilesX, tilesY;
     // uint16_t init_width, init_height;
     float scale, drag;
+    bool trails;
 };
 Settings stg = {
     0, 0, // Screen Dimensions (init to zero, set later)
     0, 0, // Map Dimensions
     0, // Scale
-    1.3f  // Drag Factor
+    1.3f, // Drag Factor
+    false
 };
 struct Grid{
     Grid(Grid _src, Settings _stg):

@@ -23,7 +23,7 @@ void main(){
     // gl_FragCoord = gl_FragCoord + offset;
     highp vec2 uv=(-gl_FragCoord.xy - offset)/resolution.xy;
     float dotResolution=resolution.y/scale/2.;
-    float dotRadius=.3;
+    float dotRadius=.15;
     
     uv.x*=dotResolution*(resolution.x/resolution.y);
     uv.y*=dotResolution;
