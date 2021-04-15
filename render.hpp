@@ -74,6 +74,7 @@ void handleEvents(v2d *cursor, float *zoomPhysics, v2d *panPhysics, float scaleC
     SDL_Event event;
     while( SDL_PollEvent( &event ) ){
     // std::cout << event.type << '\n';
+        int x,y;
         switch (event.type){
             case SDL_MOUSEWHEEL:
                 // stg.scale += event.wheel.y > 0 ? (float)event.wheel.y / 2000.0f : (float)event.wheel.y / 2000.0f;
@@ -85,12 +86,14 @@ void handleEvents(v2d *cursor, float *zoomPhysics, v2d *panPhysics, float scaleC
                 // }
                 // else
                     zoomPhysics[0] += ((float)event.wheel.y / 20000.0f);
-                    int x,y;
+                    
                     SDL_GetMouseState(&x, &y);
                     cursor->set(x,y);
                 break;
             case SDL_MULTIGESTURE:
                 zoomPhysics[0] += ((float)event.mgesture.dDist / 4);
+                SDL_GetMouseState(&x, &y);
+                cursor->set(x,y);
                 break;
             case SDL_MOUSEBUTTONDOWN:
                 isMouseDown = true;
