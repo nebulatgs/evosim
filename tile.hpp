@@ -65,7 +65,8 @@ class Creature : public Thing{
         void reset();
         int species;
         uint32_t size;
-        uint32_t color = 0x3C4CE7;
+        // uint32_t color = 0x3C4CE7;
+        uint32_t color = 0xa879fd;
         uint16_t energy = 400;
 
 };

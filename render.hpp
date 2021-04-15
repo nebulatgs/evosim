@@ -11,22 +11,7 @@ void drawTile(uint32_t x, uint16_t y, uint32_t color, GLubyte *pixels){
     pixels[index++] = ((uint8_t*)&color)[2];
 }
 
-void getScreenSize(){
-    screen_width = (uint16_t)EM_ASM_INT({
-        var width = window.innerWidth
-        || document.documentElement.clientWidth
-        || document.body.clientWidth;
-        return width;
-    });
-    screen_height = (uint16_t)EM_ASM_INT({
-        var height = window.innerHeight
-        || document.documentElement.clientHeight
-        || document.body.clientHeight;
-        return height;
-    });
-    // screen_width = screen_width > stg.init_width ? stg.init_width  : screen_width;
-    // screen_height = screen_height > stg.init_height? stg.init_height : screen_height;
-}
+
 
 // GLfloat vertices[12] = {-1.0f,  1.0f,
 //                         -1.0f, -1.0f,

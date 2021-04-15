@@ -119,6 +119,7 @@ bool Creature::update(uint8_t *pixels, Level* lvl){
     // uint32_t myColor = *((uint32_t*)col);
     // std::cout << myColor << '\n';
     // if((int)pos.x == (int)closest_food->pos.x && (int)pos.y == (int)closest_food->pos.y || myColor == 0xFF6E9055){
+    Resource* food = (Resource*)closest_food;
     if(abs(pos.x - closest_food->pos.x) <= 1 && abs(pos.y - closest_food->pos.y) <= 1){
         closest_food->randomize();
         found_food = false;

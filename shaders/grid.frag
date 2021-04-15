@@ -17,8 +17,8 @@ float aastep(float threshold,float value){
 }
 
 void main(){
-    if(scale < 20.){
-        discard;}
+    // if(scale < 20.){
+        // discard;}
     // Normalized pixel coordinates (from 0 to 1)
     // gl_FragCoord = gl_FragCoord + offset;
     highp vec2 uv=(-gl_FragCoord.xy - offset)/resolution.xy;

@@ -33,8 +33,24 @@ void main_loop() {
     // Calculate zoom and pan
     float maxScale = 1.0f;
     stg.scale = processPhysics(zoomPhysics, stg.drag, maxScale, 50)[2];
-    offset = processPhysics(panPhysics, {stg.drag, stg.drag}, {1,1}, {stg.map_width * maxScale * 2 - (float)screen_width,stg.map_height * maxScale * 2 - (float)screen_height})[2];
-    // std::cout << offset.y << '\n'; 
+    v2d clipEnd = {stg.map_width * maxScale * stg.scale*2 - (float)screen_width,stg.map_height * maxScale * stg.scale*2 - (float)screen_height};
+    v2d clipStart = {-(stg.map_width * maxScale * stg.scale*2 - (float)screen_width)/2,-(stg.map_height * maxScale * stg.scale*2 - (float)screen_height)/2};
+
+    offset = processPhysics(panPhysics, {stg.drag, stg.drag}, clipStart, clipEnd)[2];
+    offset += v2d(stg.map_width/2, stg.map_height/2) * v2d(stg.scale -1, stg.scale - 1) * 2;
+
+    offset.x = offset.x > clipEnd.x ? clipEnd.x : offset.x;
+    offset.y = offset.y > clipEnd.y ? clipEnd.y : offset.y;
+
+    // if(offset.x < clipStart.x){
+    //     offset.x = clipStart.x;
+    // }
+    // if(offset.y < clipStart.y){
+    //     offset.y = clipStart.y;
+    // }
+
+    // offset /= 2;
+    std::cout << stg.scale << '\n'; 
 
     // Set canvas size and buffer the vertices for the quad
     setCanvas();
@@ -49,7 +65,7 @@ void main_loop() {
     lvl->update(pixels);
     drawTiles2();
 
-    if(stg.scale > 20)
+    if(stg.scale > 10)
         drawGrid();
 
     SDL_GL_SwapWindow(window);
@@ -59,7 +75,11 @@ void main_loop() {
 
 int main()
 {
+    srand(time(nullptr));
     getScreenSize();
+    stg.map_height = screen_height/2;
+    stg.map_width = screen_width/2;
+    pixels = new GLubyte[stg.map_width * 2*stg.map_height * 2*3];
     // stg.init_width = screen_width;
     // stg.init_height = screen_height;
     SDL_CreateWindowAndRenderer(screen_width, screen_height, 0, &window, nullptr);
