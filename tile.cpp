@@ -96,7 +96,7 @@ bool Creature::update(uint8_t *pixels, Level* lvl){
             }
         }
         found_food = closest_food != nullptr;
-        std::cout << closest_food->pos.x << '\n';
+        // std::cout << closest_food->pos.x << '\n';
     }
     v2d dist = closest_food->pos - pos;
     dist.setLen(0.5);

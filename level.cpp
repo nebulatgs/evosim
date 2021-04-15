@@ -33,5 +33,5 @@ void Level::update(uint8_t *pixels){
         }
         
     }
-    std::cout << (int)things.size() << '\n';
+    // std::cout << (int)things.size() << '\n';
 }

@@ -4,7 +4,7 @@
 #include "level.hpp"
 #include "render.hpp"
 Level *lvl;
-
+v2d cursor = v2d(0,0);
 // float CalculateAvg(const std::list<float> &list)
 // {
 //     float avg = 0;
@@ -28,7 +28,7 @@ void main_loop() {
     }
     // std::cout << "Current FPS: " << std::to_string((int)round(sum/20.0f)) << '\n';
     startTime = SDL_GetPerformanceCounter();
-    handleEvents(zoomPhysics, panPhysics, 1.0f, 50.0f);
+    handleEvents(&cursor, zoomPhysics, panPhysics, 1.0f, 50.0f);
 
     // Calculate zoom and pan
     float maxScale = 1.0f;
@@ -37,20 +37,22 @@ void main_loop() {
     v2d clipStart = {-(stg.map_width * maxScale * stg.scale*2 - (float)screen_width)/2,-(stg.map_height * maxScale * stg.scale*2 - (float)screen_height)/2};
 
     offset = processPhysics(panPhysics, {stg.drag, stg.drag}, clipStart, clipEnd)[2];
-    offset += v2d(stg.map_width/2, stg.map_height/2) * v2d(stg.scale -1, stg.scale - 1) * 2;
+    v2d temp = cursor;
+    temp.x /= stg.map_width/2;
+    temp.y = stg.map_height - temp.y;
+    temp.y /= stg.map_height/2;
+    temp.y +=2;
+    std::cout << temp.y << '\n';
+    offset += v2d(stg.map_width/2, stg.map_height/2) * v2d(stg.scale -1, stg.scale - 1) * temp;
 
     offset.x = offset.x > clipEnd.x ? clipEnd.x : offset.x;
     offset.y = offset.y > clipEnd.y ? clipEnd.y : offset.y;
 
-    // if(offset.x < clipStart.x){
-    //     offset.x = clipStart.x;
-    // }
-    // if(offset.y < clipStart.y){
-    //     offset.y = clipStart.y;
-    // }
+    offset.x = offset.x < clipStart.x ? clipStart.x : offset.x;
+    offset.y = offset.y < clipStart.y ? clipStart.y : offset.y;
 
     // offset /= 2;
-    std::cout << stg.scale << '\n'; 
+    // std::cout << stg.scale << '\n'; 
 
     // Set canvas size and buffer the vertices for the quad
     setCanvas();

@@ -70,7 +70,7 @@ static std::string read_shader_file
 // an example of something we will control from the javascript side
 bool background_is_black = true;
 
-void handleEvents(float *zoomPhysics, v2d *panPhysics, float scaleClipStart, float scaleClipEnd){
+void handleEvents(v2d *cursor, float *zoomPhysics, v2d *panPhysics, float scaleClipStart, float scaleClipEnd){
     SDL_Event event;
     while( SDL_PollEvent( &event ) ){
     // std::cout << event.type << '\n';
@@ -85,6 +85,9 @@ void handleEvents(float *zoomPhysics, v2d *panPhysics, float scaleClipStart, flo
                 // }
                 // else
                     zoomPhysics[0] += ((float)event.wheel.y / 20000.0f);
+                    int x,y;
+                    SDL_GetMouseState(&x, &y);
+                    cursor->set(x,y);
                 break;
             case SDL_MULTIGESTURE:
                 zoomPhysics[0] += ((float)event.mgesture.dDist / 4);
