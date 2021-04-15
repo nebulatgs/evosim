@@ -85,11 +85,12 @@ bool Creature::update(uint8_t *pixels, Level* lvl){
                     return 0;
                 }
                 // int dist = abs(sqrt((pos.x - thing->pos.x) * (pos.x - thing->pos.x) + (pos.y - thing->pos.y) * (pos.y - thing->pos.y)));
-                v2d dist = pos - thing->pos;
+                v2d dist = thing->pos - pos;
                 // && (thing->pos.x - pos.x== thing->pos.y -pos.y || thing->pos.x - pos.x ==0 || thing->pos.y -pos.y ==0)
                 if(dist < distance){
                     distance = dist;
                     closest_food = thing;
+                    foodPos = thing->pos;
                 }
                 // y += thing->y > 0 ? 1 : -1;
             }
@@ -98,7 +99,7 @@ bool Creature::update(uint8_t *pixels, Level* lvl){
         std::cout << closest_food->pos.x << '\n';
     }
     v2d dist = closest_food->pos - pos;
-    dist.setLen(1);
+    dist.setLen(0.5);
     // int tempX = (closest_food->pos.x - pos.x > 0 ? 1 : -1);
     float tempX = dist.x, tempY = dist.y;
     pos.x +=  (tempX + pos.x) < stg.map_width && (tempX + pos.x) > 0 ? tempX : 0;
@@ -121,7 +122,11 @@ bool Creature::update(uint8_t *pixels, Level* lvl){
     if(abs(pos.x - closest_food->pos.x) <= 1 && abs(pos.y - closest_food->pos.y) <= 1){
         closest_food->randomize();
         found_food = false;
-        energy += 500;
+        energy += 250;
+    }
+    if(closest_food->pos != foodPos){
+        found_food = false;
+        closest_food = nullptr;
     }
     for(auto tile : tiles){
             // x = !(bool)(rand() % 50) ? (rand() % stg.map_width) : x;
