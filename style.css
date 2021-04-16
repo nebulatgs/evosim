@@ -107,9 +107,41 @@ canvas {
     height: auto;
 }
 
+.reset {
+    display: block;
+    margin: auto;
+    grid-column: 2 / span 1;
+    grid-row: 4 / span 1;
+    pointer-events: all;
+    width: 70%;
+    height: auto;
+}
+
+.resetAnim {
+    /* animation-play-state: paused; */
+    animation-name: spin;
+    animation-duration: 500ms;
+    animation-iteration-count: 1;
+    animation-timing-function: cubic-bezier(0, 0.22, 0.33, 0.55, 0.66, 0.88, 1);
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(360deg);
+    }
+    to {
+        transform: rotate(0deg);
+    }
+}
+
 .pauseCheckbox {
     width: 50%;
     height: 75%;
+}
+
+.resetCheckbox {
+    width: 60%;
+    height: 60%;
 }
 
 #bar-parent {
