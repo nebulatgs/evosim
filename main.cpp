@@ -6,6 +6,8 @@
 #include <unistd.h>
 Level *lvl;
 v2d cursor = v2d(0,0);
+bool frame;
+float _speed;
 // float CalculateAvg(const std::list<float> &list)
 // {
 //     float avg = 0;
@@ -32,7 +34,9 @@ void changeSaturation(double *R, double *G, double *B, double change) {
   *G=P+((*G)-P)*change;
   *B=P+((*B)-P)*change; }
 extern "C" void EMSCRIPTEN_KEEPALIVE setFade(bool fade) { stg.trails = fade; }
+extern "C" void EMSCRIPTEN_KEEPALIVE changePause(bool pause, float speed) { stg.speed = pause ? 0 : speed; _speed = speed;}
 extern "C" void EMSCRIPTEN_KEEPALIVE setSpeed(float speed) { stg.speed = speed; std::cout << stg.speed << '\n';}
+extern "C" void EMSCRIPTEN_KEEPALIVE nextFrame(float speed) { _speed = speed; frame = 1;}
 
 int main();
 
@@ -46,6 +50,9 @@ extern "C" void EMSCRIPTEN_KEEPALIVE restart(){
 }
 
 void main_loop() { 
+    if(stg.speed == 0 && frame){
+        stg.speed = _speed;
+    }
     endTime = SDL_GetPerformanceCounter();
     float elapsed = (endTime - startTime) / (float)SDL_GetPerformanceFrequency();
     frameAvg.push_back(1.0f/elapsed);
@@ -109,6 +116,11 @@ void main_loop() {
         drawGrid();
 
     SDL_GL_SwapWindow(window);
+    if(frame){
+        frame = 0;
+        _speed = 0;
+        stg.speed = 0;
+    }
     // emscripten_sleep(stg.sleep);
     // usleep(stg.sleep * 1000);
 }
