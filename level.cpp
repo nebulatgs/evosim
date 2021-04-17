@@ -29,6 +29,8 @@ void Level::update(uint8_t *pixels){
     for(int i = 0; i < things.size(); i++){
         bool death = things[i] -> update(pixels, this);
         if (death){
+            // things[i] = new Border(things[i]->pos.x, things[i]->pos.y);
+            delete things[i];
             things.erase(things.begin() + i);
         }
         

@@ -35,7 +35,9 @@ void changeSaturation(double *R, double *G, double *B, double change) {
   *B=P+((*B)-P)*change; }
 extern "C" void EMSCRIPTEN_KEEPALIVE setFade(bool fade) { stg.trails = fade; }
 extern "C" void EMSCRIPTEN_KEEPALIVE changePause(bool pause, float speed) { stg.speed = pause ? 0 : speed; _speed = speed;}
-extern "C" void EMSCRIPTEN_KEEPALIVE setSpeed(float speed) { stg.speed = speed; std::cout << stg.speed << '\n';}
+extern "C" void EMSCRIPTEN_KEEPALIVE setSpeed(float speed) { stg.speed = speed; 
+// std::cout << stg.speed << '\n';
+}
 extern "C" void EMSCRIPTEN_KEEPALIVE nextFrame(float speed) { _speed = speed; frame = 1;}
 
 int main();
@@ -69,9 +71,11 @@ void main_loop() {
     // Calculate zoom and pan
     float maxScale = 1.0f;
     stg.scale = processPhysics(zoomPhysics, stg.drag, maxScale, 50)[2];
+    // v2d clipEnd = {stg.map_width * stg.scale * 2 - (float)stg.map_width, stg.map_height * stg.scale * 2 - (float)stg.map_height};
+    // v2d clipStart = {-(stg.map_width * stg.scale * 2 - (float)stg.map_width)/2, -(stg.map_height * stg.scale * 2 - (float)stg.map_height)/2};
     v2d clipEnd = {stg.map_width * maxScale * stg.scale*2 - (float)screen_width,stg.map_height * maxScale * stg.scale*2 - (float)screen_height};
     v2d clipStart = {-(stg.map_width * maxScale * stg.scale*2 - (float)screen_width)/2,-(stg.map_height * maxScale * stg.scale*2 - (float)screen_height)/2};
-
+    // std::cout << clipEnd.x << '\n';
     offset = processPhysics(panPhysics, {stg.drag, stg.drag}, clipStart, clipEnd)[2];
     v2d temp = cursor;
     temp.x /= stg.map_width/2;
@@ -79,7 +83,7 @@ void main_loop() {
     temp.y /= stg.map_height/2;
     temp.y +=2;
     // std::cout << temp.y << '\n';
-    offset += v2d(stg.map_width/2, stg.map_height/2) * v2d(stg.scale -1, stg.scale - 1) * temp;
+    offset += v2d(stg.map_width/(2 * maxScale), stg.map_height/(2 * maxScale)) * v2d(stg.scale -maxScale, stg.scale - maxScale) * temp;
 
     offset.x = offset.x > clipEnd.x ? clipEnd.x : offset.x;
     offset.y = offset.y > clipEnd.y ? clipEnd.y : offset.y;
@@ -110,6 +114,7 @@ void main_loop() {
     }
     
     lvl->update(pixels);
+    glGenFramebuffers(1, &fbo);
     drawTiles2();
 
     if(stg.scale > 10)
@@ -171,7 +176,7 @@ int main()
             y,
             1
         ));}
-        if(randDensity(100000)){
+        if(randDensity(10000)){
         lvl->things.push_back(new Creature(
             x,
             y,

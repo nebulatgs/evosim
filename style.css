@@ -111,7 +111,7 @@ canvas {
     display: block;
     margin: auto;
     grid-column: 2 / span 1;
-    grid-row: 4 / span 1;
+    grid-row: 11 / span 1;
     pointer-events: all;
     width: 70%;
     height: auto;
@@ -147,7 +147,7 @@ canvas {
 #bar-parent {
     display: grid;
     grid-template-columns: 1vw 3vw auto;
-    grid-template-rows: 25vh 5vh 5vh 5vh 5vh 5vh 5vh 5vh 5vh 5vh 5vh 100vh auto;
+    grid-template-rows: 25vh 2.5vh 5vh 5vh 5vh 5vh 5vh 5vh 5vh 5vh 5vh 2.5vh 100vh auto;
     pointer-events: none
 }
 

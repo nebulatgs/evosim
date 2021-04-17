@@ -216,14 +216,7 @@ void drawTiles2(){
     // auto pixels = new GLubyte[tilesX * tilesY * 3];
        
     // std::cout << (int)pixels[2][2][2] << '\n';
-    GLuint textureID;
-    glGenTextures(1, &textureID);
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, textureID);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, stg.map_width, stg.map_height, 0, GL_RGB, GL_UNSIGNED_BYTE, pixels);
     
     glUseProgram(tiles2Program);
@@ -247,7 +240,7 @@ void drawTiles2(){
     // }
     // delete[] pixels;
     
-    glDeleteTextures(1, &textureID);
+    // glDeleteTextures(1, &textureID);
 } 
 
 GLuint compileShaders(std::string vertShader, std::string fragShader){
@@ -316,5 +309,14 @@ void initGL(SDL_Window *window){
 
     GLint uniform_ScaleTiles = glGetUniformLocation(tilesProgram, "scale");
     glUniform1f(uniform_ScaleTiles, stg.scale);
+
+    
+    glGenTextures(1, &textureID);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, textureID);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     
 }

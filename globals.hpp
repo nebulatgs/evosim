@@ -18,7 +18,7 @@ uint16_t screen_width, screen_height;
 float zoomPhysics[3], scale;
 v2d panPhysics[3], offset;
 bool isMouseDown;
-GLuint gridProgram, tilesProgram, tiles2Program;
+GLuint gridProgram, tilesProgram, tiles2Program, fbo, textureID;
 SDL_Window *window;
 std::list<float> frameAvg;
 

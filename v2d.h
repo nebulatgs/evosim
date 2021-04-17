@@ -72,6 +72,12 @@ class v2d {
         return(*this);
     }
 
+    v2d rotate(float rad){
+        float cs = cos(rad), sn = sin(rad);
+        float px = x * cs - y * sn; 
+        float py = x * sn + y * cs;
+        return v2d(px, py);
+    }
     float x;
     float y;
 };
