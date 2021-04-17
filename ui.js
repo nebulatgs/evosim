@@ -43,3 +43,15 @@ function reset() {
     document.getElementById('resetSpin').classList.add('resetAnim'); // start animation
     _restart();
 }
+
+var browser = bowser.getParser(window.navigator.userAgent);
+var browserName = browser.getBrowser().name;
+if (browserName == "Firefox") {
+    let chrome = document.getElementById("chrome");
+    chrome.innerHTML = "";
+    chrome.remove();
+} else {
+    let firefox = document.getElementById("firefox");
+    firefox.innerHTML = "";
+    firefox.remove();
+}

@@ -52,6 +52,7 @@ extern "C" void EMSCRIPTEN_KEEPALIVE restart(){
 }
 
 void main_loop() { 
+    getBrowser();
     if(stg.speed == 0 && frame){
         stg.speed = _speed;
     }

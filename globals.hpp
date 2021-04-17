@@ -18,6 +18,7 @@ uint16_t screen_width, screen_height;
 float zoomPhysics[3], scale;
 v2d panPhysics[3], offset;
 bool isMouseDown;
+bool firefox;
 GLuint gridProgram, tilesProgram, tiles2Program, fbo, textureID;
 SDL_Window *window;
 std::list<float> frameAvg;
@@ -41,6 +42,15 @@ void getScreenSize(){
     });
     // screen_width = screen_width > stg.init_width ? stg.init_width  : screen_width;
     // screen_height = screen_height > stg.init_height? stg.init_height : screen_height;
+}
+
+void getBrowser(){
+    firefox = (uint16_t)EM_ASM_INT({
+        // var browser = bowser.detect
+        var browser = bowser.getParser(window.navigator.userAgent);
+        var name = browser.getBrowser().name;
+        return name=="Firefox";
+    });
 }
 
 constexpr int64_t ipow(int64_t base, int exp, int64_t result = 1) {

@@ -85,7 +85,10 @@ void handleEvents(v2d *cursor, float *zoomPhysics, v2d *panPhysics, float scaleC
                 //     zoomPhysics[2] += copysign(1.0, event.wheel.y) * 10;
                 // }
                 // else
-                    zoomPhysics[0] += ((float)event.wheel.y / 20000.0f);
+                    if(firefox)
+                        zoomPhysics[0] += ((float)event.wheel.y / 1000.0f);
+                    else
+                        zoomPhysics[0] += ((float)event.wheel.y / 20000.0f);
                     
                     SDL_GetMouseState(&x, &y);
                     cursor->set(x,y);
