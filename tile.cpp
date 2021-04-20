@@ -1,5 +1,6 @@
 #include "tile.hpp"
 #include <iostream>
+#include "proteins.hpp"
 // extern int tilesX, tilesY;
 enum class mutationType {pSub, pIns, pDel, gInv, gDel};
 enum class TileType {Wall, Resource, Creature};
@@ -10,6 +11,8 @@ class Level{
         // Level();
         std::vector<Thing*> things;
         void update(uint8_t *pixels);
+        long oldTime;
+        bool antibiotic;
         // void update();
 };
 
@@ -64,6 +67,7 @@ extern bool randDensity(int number);
 Creature::Creature(int x, int y, int species) : Thing(x, y, TileType::Creature), species(species), size(1){
     // genome = ecosystem[species];
     tiles.push_back(Tile(pos.x, pos.y, color));
+    genome = getDefaults();
 }
 int Creature::readNext(){
     std::string key = genome[geneIndex].toString();
@@ -75,113 +79,218 @@ int Creature::readNext(){
 void Creature::reset(){
     transcribedProteins.clear();
 }
-bool Creature::update(uint8_t *pixels, Level* lvl){
-    // if(randDensity(100)){
-    //     // lvl->things.push_back(new Creature(x+1, y, species));
-    // }
-    if(!found_food){
-        closest_food = nullptr;
-        distance.set(1000000,1000000);
-        int index = 0;
-        for(auto thing : lvl->things){
-            if(thing->type == TileType::Resource){
-                index++;
-                if (pos.x == thing->pos.x && pos.y == thing->pos.y){
-                    // thing->randomize();
-                    return 0;
-                }
-                // int dist = abs(sqrt((pos.x - thing->pos.x) * (pos.x - thing->pos.x) + (pos.y - thing->pos.y) * (pos.y - thing->pos.y)));
-                v2d dist = v2d(abs(thing->pos.x - pos.x),abs(thing->pos.y - pos.y));
-                // && (thing->pos.x - pos.x== thing->pos.y -pos.y || thing->pos.x - pos.x ==0 || thing->pos.y -pos.y ==0)
-                v2d vision = v2d(30,30);
-                if(dist < distance && dist < vision && ((Resource*)thing)->food){
-                    distance = dist;
-                    closest_food = (Resource*)thing;
-                    foodPos = thing->pos;
-                }
-                // y += thing->y > 0 ? 1 : -1;
-            }
+bool Creature::findFood(int radius, void* buffer){
+    // std::cout << radius << '\n';
+    int index = 0;
+    v2d distance = v2d(99999,99999);
+    int food = -1;
+    for(auto thing : current_lvl->things){
+        if(thing->type == TileType::Resource){
+            if (pos.x == thing->pos.x && pos.y == thing->pos.y){                    
+                return 0;
+            }                
+            v2d dist = v2d(abs(thing->pos.x - pos.x),abs(thing->pos.y - pos.y));                
+            v2d vision = v2d(radius, radius);
+            if(dist < distance && dist < vision && ((Resource*)thing)->food){
+                distance = dist;
+                food = index;
+            }                
         }
-        if(closest_food == nullptr && index == 0)
-            return 1;
-        else if(closest_food == nullptr){
-            wander = 1;
-        }
-        else {
-            wander = 0;
-        }
-        found_food = 1;
+        index++;
     }
+    // *(Thing**)buffer = search[index];
+    *(int*)buffer = food;
+    return 0;
+}
 
-        // found_food = closest_food != nullptr;
-        // std::cout << closest_food->pos.x << '\n';
+bool Creature::moveWander(){
+    float fac = 0.5 * stg.sleep;
+    if(wanderTime != time(nullptr)) {
+        wanderDirection = v2d(1,1);
+        float r = ((float)rand()/(float)RAND_MAX);
+        wanderDirection = (wanderDirection.rotate(r*M_PI*2));
+        wanderDirection.setLen(fac);
+        // tempX = currentDirection->x, tempY = currentDirection->y;
+        wanderTime = time(nullptr);
+    }
+    wanderDirection.setLen(fac);
+    float tempX = wanderDirection.x, tempY = wanderDirection.y;
+    pos.x +=  (tempX + pos.x) < stg.map_width - 1 && (tempX + pos.x) > 1 ? tempX : 1;
+    pos.y +=  (tempY + pos.y)< stg.map_height - 1 && (tempY + pos.y)> 1 ? tempY : 1;
+    energy -= 2 * stg.sleep; 
+    return 0;
+}
+
+bool Creature::moveFood(){
     v2d dist = closest_food->pos - pos;
-    dist.setLen(0.5 * stg.sleep);
-    // int tempX = (closest_food->pos.x - pos.x > 0 ? 1 : -1);
+    dist.setLen(0.5 * stg.sleep);    
     float tempX = dist.x, tempY = dist.y;
-    if(wander) {
-        if(wanderTime != time(nullptr)) {
-            float fac = 0.5f * stg.sleep;
-            // float rand1 = (rand()/(float)RAND_MAX) * 10.0f;
-            // float rand2 = (rand()/(float)RAND_MAX) * 10.0f;
-            // tempX = (((rand() - ((float)RAND_MAX/rand1)) / (float)RAND_MAX) ) * fac;
-            // tempY = (((rand() - ((float)RAND_MAX/rand2)) / (float)RAND_MAX) ) * fac;
-            wanderDirection = v2d(1,1);
-            float r = ((float)rand()/(float)RAND_MAX);
-            wanderDirection = wanderDirection.rotate(r*M_PI*2);
-            wanderDirection.setLen(fac);
-            tempX = wanderDirection.x, tempY = wanderDirection.y;
-            wanderTime = time(nullptr);
-        }
-        else {
-            tempX = wanderDirection.x, tempY = wanderDirection.y;
-        }
-    }
-    pos.x +=  (tempX + pos.x) < stg.map_width && (tempX + pos.x) > 0 ? tempX : 0;
-
-    // int tempY = (closest_food->pos.y - pos.y > 0 ? 1 : -1);
-    pos.y +=  (tempY + pos.y)< stg.map_height && (tempY + pos.y)> 0 ? tempY : 0;
-    energy -= 2 * stg.sleep;
-    // std::cout << stg.sleep << '\n';
+    pos.x +=  (tempX + pos.x) < stg.map_width - 1 && (tempX + pos.x) > 1 ? tempX : 1;
+    
+    pos.y +=  (tempY + pos.y)< stg.map_height - 1 && (tempY + pos.y)> 1 ? tempY : 1;
+    energy -= 2 * stg.sleep; 
+    return 0;
+}
+bool Creature::reproduce(){
     if(energy > 1000){
         energy -= 500;
+        // mutate();
         Creature* child = new Creature(pos.x, pos.y+1, species);
-        // Creature* newCell = (Creature*)(lvl->things.back());
-        uint8_t* childColor = (uint8_t*)(&child->color);
-        // childColor[0] += rand()% 20 -10;
-        childColor[1] = (rand() % 256);
-        // childColor[2] += rand()% 20 -10;
-        // newCell->closest_food = nullptr;
+        child->genome = genome;  
+        child->mutate();    
+        uint8_t* childColor = (uint8_t*)(&child->color);        
+        childColor[1] = (rand() % 256);                
         child->found_food = 0; 
-        lvl->things.push_back(child);
+        current_lvl->things.push_back(child);
     }
-    // int index = (int)pos.x * 3 + ((int)pos.y * 3 * stg.map_width);
-    // uint8_t col[3] = {pixels[index++], pixels[index++], pixels[index++]};
-    // uint32_t myColor = *((uint32_t*)col);
-    // std::cout << myColor << '\n';
-    // if((int)pos.x == (int)closest_food->pos.x && (int)pos.y == (int)closest_food->pos.y || myColor == 0xFF6E9055){
-    // Resource* food = (Resource*)closest_food;
-    if(abs(pos.x - closest_food->pos.x) <= 1 && abs(pos.y - closest_food->pos.y) <= 1){
-        closest_food->randomize();
-        // closest_food->food = 0;
+    return 0;
+}
+uint32_t oldCol = 0x3C4CE7;
+bool Creature::SetARes(int strength){
+    a_res = strength;
+    uint8_t *startCol = (uint8_t*)&oldCol;
+    uint8_t r = (startCol[0] * (100 - strength) + (0x34 * strength)) / 100;
+    uint8_t g = (startCol[1] * (100 - strength) + (0x98 * strength)) / 100;
+    uint8_t b = (startCol[2] * (100 - strength) + (0xdb * strength)) / 100;
+    startCol = (uint8_t*)&color;
+    startCol[0] = r;
+    startCol[1] = g;
+    startCol[2] = b;
+    std::cout << (int)r << '\n';
+    // #3498db
+    // color = 0xb98029;
+    return 0;
+}
+void Creature::mutate(){
+    if(((float)rand() / (float)RAND_MAX) * 1000 * (1/stg.sleep) > (1000 * (1/stg.sleep) - 1)){
+        int i = (int)((float)rand() / (float)RAND_MAX) * genome.size();
+        int j = (int)((float)rand() / (float)RAND_MAX) * genome[i].bases.size();
+        genome[i].bases[j] = (int)((float)rand() / (float)RAND_MAX) * 3;
+    }
+}
+bool Creature::eatFood(){
+    if(abs(pos.x - closest_food->pos.x) <= 1 && abs(pos.y - closest_food->pos.y) <= 1 && closest_food->food){
+        closest_food->randomize();        
         found_food = false;
         energy += 250;
     }
     if(closest_food->pos != foodPos){
-        found_food = false;
-        // closest_food = nullptr;
+        found_food = false;        
     }
-    for(auto tile : tiles){
-            // x = !(bool)(rand() % 50) ? (rand() % stg.map_width) : x;
-            // y += 1;
-            // randomize();
-            // tile.color = 0xEEEEEE;
+    return 0;
+}
+int Creature::processInstruction(int protein, int memory){
+    int result;
+    bool error;
+    switch(protein){
+        case FindFood:
+            error = findFood(memory, &result);
+            closest_food = (Resource*)current_lvl->things[result];
+            break;
+        case MoveFood:
+            if(memory > -1)
+                error = moveFood();
+                // error = 0;
+            else
+                error = moveWander();
+            break;
+        case EatFood:
+            eatFood();
+            break;
+        case Reproduce:
+            reproduce();
+            break;
+        case SetA_Res:
+            SetARes(memory);
+        default:
+            error = 1;
+    }
+    if(result == -1)
+        return -1;
+    return error;
+}
+std::vector<Gene> Creature::getDefaults(){
+    return {
+        {{2,0,0}},
+        {{9,9,9}},
+        {{0, 0, 0}},
+        {{0, 1, 0}},
+        {{0, 2, 0}},
+        {{0, 3, 0}},
+        {{1,0,1}}, //Read antibiotic resistance gene
+        {{20,20,20}},
+        {{1, 0, 2}}
+    };
+}
+bool Creature::processGenome(){
+    using namespace std;
+    stack<int> brain;
+    for(int i = 0; i < genome.size(); i++){
+        int protein = proteinLUT[genome[i].toString()];
+        // void* instruction;
+         bool (*instuction)(int, void*);
+        if(protein > Protein::instr_sep){
+        // Process instruction
+            if(brain.empty()){
+                int top = ltbrain.top();
+                ltbrain.pop();
+                ltbrain.push(processInstruction(protein, top));
+            }
+            else{
+                int top = brain.top();
+                brain.pop();
+                ltbrain.push(processInstruction(protein, top));
+            }
+        }
+        else{
+        // Process value
+            i++;
+            brain.push(accumulate(genome[i].bases.begin(), genome[i].bases.end(), 0));
+        }
+    }
+    return 0;
+}
+bool Creature::update(uint8_t *pixels, Level* lvl){            
+    // if(!found_food){
+    //     closest_food = nullptr;
+    //     distance.set(1000000,1000000);
+    //     int index = 0;
+
+    //     if(closest_food == nullptr && index == 0)
+    //         return 1;
+    //     else if(closest_food == nullptr){
+    //         wander = 1;
+    //     }
+    //     else {
+    //         wander = 0;
+    //     }
+    //     found_food = 1;
+    // }
+    // Move
+   
+    // Reproduce at sufficient energy
+
+    // Eat food                       
+
+    // Draw me
+    current_lvl = lvl;
+    // genome = getDefaults();
+    if(processGenome()){
+        return 1;
+    }
+    for(auto tile : tiles){                                                
             tile.x = pos.x;
             tile.y = pos.y;
-            tile.update(pixels);
+            tile.update(pixels, color);
     }
-    if(closest_food == nullptr && !wander)
-        return 1;
+    if(current_lvl->antibiotic){
+        if(((float)rand() / (float)RAND_MAX) * (100 - a_res) < 1){
+            return 1;
+        }
+    }
+    // Am I dead?
+    // if(closest_food == nullptr && !wander)
+    //     return 1;
     return !energy;
 }
 
@@ -200,7 +309,7 @@ Border::Border(int x, int y) : Thing(x, y, TileType::Wall){
 
 bool Border::update(uint8_t *pixels, Level* lvl){
     for(auto x : tiles){
-        x.update(pixels);
+        x.update(pixels, color);
     }
     return 0;
 }
@@ -216,7 +325,7 @@ bool Resource::update(uint8_t *pixels, Level* lvl){
             // randomize();
             tile.x = pos.x;
             tile.y = pos.y;
-            tile.update(pixels);
+            tile.update(pixels, color);
         }
         return 0;
     }
@@ -225,8 +334,10 @@ bool Resource::update(uint8_t *pixels, Level* lvl){
     }
 }
 
-void Tile::update(uint8_t *pixels){
+void Tile::update(uint8_t *pixels, uint32_t color){
     int index = x * 3 + (y * 3 * stg.map_width);
+    if(index > stg.map_height * stg.map_width * 3)
+        return;
     pixels[index++] = ((uint8_t*)&color)[0];
     pixels[index++] = ((uint8_t*)&color)[1];
     pixels[index++] = ((uint8_t*)&color)[2];

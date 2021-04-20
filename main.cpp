@@ -52,7 +52,6 @@ extern "C" void EMSCRIPTEN_KEEPALIVE restart(){
 }
 
 void main_loop() { 
-    getBrowser();
     if(stg.speed == 0 && frame){
         stg.speed = _speed;
     }
@@ -110,7 +109,7 @@ void main_loop() {
         for (int i = 0; i < stg.map_height * stg.map_width * 3; i+=3){
             pixels[i] = pixels[i] <= 0x27 ? 0 : pixels[i] - 1;
             pixels[i+1] = pixels[i+1] <= 0x27 ? 0 : pixels[i+1] - 1;
-            pixels[i+2] = pixels[i+2] <= 0x27 ? 0 : pixels[i+2] - 1;
+            pixels[i+2] = pixels[i+2] <= 0x27 ? 0 : pixels[i+2] * 2 - 1;
         }
     }
     
@@ -135,6 +134,7 @@ void main_loop() {
 
 int main()
 {
+    getBrowser();
     srand(time(nullptr));
     getScreenSize();
     stg.map_height = screen_height/2;
@@ -142,7 +142,8 @@ int main()
     pixels = new GLubyte[stg.map_width * 2*stg.map_height * 2*3];
     // stg.init_width = screen_width;
     // stg.init_height = screen_height;
-    SDL_CreateWindowAndRenderer(screen_width, screen_height, 0, &window, nullptr);
+    SDL_Renderer *renderer;
+    SDL_CreateWindowAndRenderer(screen_width, screen_height, 0, &window, &renderer);
 
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
@@ -163,7 +164,9 @@ int main()
     // Push food cells
     for(int i = 0; i < grid.xDivs * grid.yDivs; i++){
         int x = i % grid.xDivs * grid.tWidth;
+        x += 1;
         int y = i / grid.xDivs * grid.tHeight;
+        y += 1;
         if(x == 0 || y == 0 || i % grid.xDivs == grid.xDivs - 1 || i / grid.xDivs == grid.yDivs - 1){
             lvl->things.push_back(new Border(
                 x,

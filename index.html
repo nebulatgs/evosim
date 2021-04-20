@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="boid.css">
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/snap.svg/0.5.1/snap.svg-min.js"></script> -->
     <script src="bowser.js"></script>
+    <title>Evosim</title>
 </head>
 
 <body>
@@ -95,7 +96,7 @@
             <line class="pauseStroke" x1="16.5" y1="1.5" x2="16.5" y2="29.5" />
             <path class="pauseStroke pause" id="pause" d="M1.5,1.5L1.5,29.5M16.5,1.5L16.5,29.5"></path>
         </svg>  -->
-        <svg width="30%" height="100%" viewBox="0 0 18 31" class="pause" id="chrome">
+        <svg width="30%" height="100%" viewBox="0 0 18 31" class="pause glow" id="chrome">
             <path class="pauseStroke pause" id="pause" d="M1.5,1.5 l0,28 m15,0 l0,-14 l0,-14" stroke="#7C8294">
               <animate class="toPlay" repeatCount="1" attributeName="d" begin="indefinite" dur="300ms" to="M5,3 l0,28 m0,0 l24,-14 l-24,-14" keySplines="
                     0.1 0.8 0.2 1.0;
@@ -210,6 +211,12 @@
             <animate class="toPlay" repeatCount="1" attributeName="viewBox" begin="indefinite" dur="100ms" to="0 0 30 34" fill="freeze" />
             <animate class="toPause" repeatCount="1" attributeName="viewBox" begin="indefinite" dur="100ms" to="0 0 18 31" fill="freeze" />
           </svg>
+        <input type="checkbox" class="next nextCheckbox" id="nextButton" onchange="nextFrame(this)">
+        <svg class="next" viewBox="0 0 20 12">
+            <circle cx="8.6664" cy="8.6664" r="2.5" fill="#353b48"/>
+            <path d="m1 8.6664c0-4.234 3.4324-7.6664 7.6664-7.6664s7.6664 3.4324 7.6664 7.6664" fill="none" stroke="#7C8294" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+            <path d="m18.626 6.4987-2.2935 2.1677-2.9395-1.4302" fill="none" stroke="#7C8294" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+           </svg>
 
         <input type="checkbox" class="reset resetCheckbox" id="resetButton" onchange="reset()">
 

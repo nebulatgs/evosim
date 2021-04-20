@@ -10,5 +10,7 @@ class Level{
         ~Level();
         std::vector<Thing*> things;
         void update(uint8_t *pixels);
+        long oldTime;
+        bool antibiotic;
         // void update();
 };

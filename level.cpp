@@ -4,6 +4,16 @@
 #include <SDL.h>
 #include <iostream>
 // extern GLubyte* pixels;
+struct Settings{
+    uint16_t screen_width, screen_height;
+    uint16_t map_width, map_height;
+    // const uint16_t tilesX, tilesY;
+    // uint16_t init_width, init_height;
+    float scale, drag;
+    bool trails;
+    float speed;
+};
+extern Settings stg;
 // Level::Level(){}
 
 
@@ -26,12 +36,26 @@
 //     // SDL_RenderPresent(renderer);
 // }
 void Level::update(uint8_t *pixels){
-    for(int i = 0; i < things.size(); i++){
+    int x = things.size();
+    if(time(NULL) - oldTime > 5){
+        oldTime = time(NULL);
+        antibiotic = true;
+        for (int i = 0; i < stg.map_height * stg.map_width * 3; i+=3){
+            pixels[i] += 75;
+
+        }
+    }
+    else{
+        antibiotic = false;
+    }
+    // oldTime =  ? time(NULL) : oldTime;
+    for(int i = 0; i < x; i++){
         bool death = things[i] -> update(pixels, this);
         if (death){
             // things[i] = new Border(things[i]->pos.x, things[i]->pos.y);
             delete things[i];
             things.erase(things.begin() + i);
+            x--;
         }
         
     }
