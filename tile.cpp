@@ -132,8 +132,8 @@ bool Creature::moveFood(){
     return 0;
 }
 bool Creature::reproduce(){
-    if(energy > 1000){
-        energy -= 500;
+    if(energy > 500){
+        energy -= 250;
         // mutate();
         Creature* child = new Creature(pos.x, pos.y+1, species);
         child->genome = genome;  
@@ -156,17 +156,21 @@ bool Creature::SetARes(int strength){
     startCol[0] = r;
     startCol[1] = g;
     startCol[2] = b;
-    std::cout << (int)r << '\n';
+    // std::cout << strength << '\n';
     // #3498db
     // color = 0xb98029;
     return 0;
 }
 void Creature::mutate(){
-    if(((float)rand() / (float)RAND_MAX) * 1000 * (1/stg.sleep) > (1000 * (1/stg.sleep) - 1)){
-        int i = (int)((float)rand() / (float)RAND_MAX) * genome.size();
-        int j = (int)((float)rand() / (float)RAND_MAX) * genome[i].bases.size();
-        genome[i].bases[j] = (int)((float)rand() / (float)RAND_MAX) * 3;
-    }
+    // if(((float)rand() / (float)RAND_MAX) * 1000 * (1/stg.sleep) > (1000 * (1/stg.sleep) - 1)){
+    //     int i = (int)((float)rand() / (float)RAND_MAX) * genome.size();
+    //     int j = (int)((float)rand() / (float)RAND_MAX) * genome[i].bases.size();
+    //     if(proteinLUT[genome[i].toString()] < Protein::instr_sep)
+    //         genome[i].bases[j] = (int)((float)rand() / (float)RAND_MAX) * 33;
+    //     else
+    //         genome[i].bases[j] = (int)((float)rand() / (float)RAND_MAX) * 3;
+    // // }
+    genome[7].bases[rand() % 3] = rand() % 33;
 }
 bool Creature::eatFood(){
     if(abs(pos.x - closest_food->pos.x) <= 1 && abs(pos.y - closest_food->pos.y) <= 1 && closest_food->food){
@@ -218,7 +222,7 @@ std::vector<Gene> Creature::getDefaults(){
         {{0, 2, 0}},
         {{0, 3, 0}},
         {{1,0,1}}, //Read antibiotic resistance gene
-        {{20,20,20}},
+        {{5,5,5}},
         {{1, 0, 2}}
     };
 }
@@ -284,7 +288,8 @@ bool Creature::update(uint8_t *pixels, Level* lvl){
             tile.update(pixels, color);
     }
     if(current_lvl->antibiotic){
-        if(((float)rand() / (float)RAND_MAX) * (100 - a_res) < 1){
+        // if(((float)rand() / (float)RAND_MAX) * a_res < 1){
+        if(!((rand() % 100) < a_res)){
             return 1;
         }
     }

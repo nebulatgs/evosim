@@ -160,6 +160,7 @@ int main()
     });
     Grid grid = Grid(stg.map_width, stg.map_height, stg);
     lvl = new Level();
+    lvl->oldTime = time(NULL) - 14;
 
     // Push food cells
     for(int i = 0; i < grid.xDivs * grid.yDivs; i++){
@@ -174,7 +175,7 @@ int main()
             ));
             continue;
         }
-        if(randDensity(2000)){
+        if(randDensity(1000)){
         lvl->things.push_back(new Resource(
             x,
             y,

@@ -37,7 +37,7 @@ extern Settings stg;
 // }
 void Level::update(uint8_t *pixels){
     int x = things.size();
-    if(time(NULL) - oldTime > 5){
+    if(time(NULL) - oldTime > 6){
         oldTime = time(NULL);
         antibiotic = true;
         for (int i = 0; i < stg.map_height * stg.map_width * 3; i+=3){
