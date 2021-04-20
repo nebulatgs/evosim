@@ -160,7 +160,7 @@ int main()
     });
     Grid grid = Grid(stg.map_width, stg.map_height, stg);
     lvl = new Level();
-    lvl->oldTime = time(NULL) - 14;
+    lvl->oldTime = time(NULL) - 5;
 
     // Push food cells
     for(int i = 0; i < grid.xDivs * grid.yDivs; i++){
