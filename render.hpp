@@ -1,4 +1,7 @@
 #include "globals.hpp"
+#include <filesystem>
+#include <fstream>
+
 #pragma once
 class Gene;
 std::vector<std::vector<Gene>> ecosystem;
@@ -202,11 +205,11 @@ void drawTiles(){
 }
 
 void drawTiles2(){
-    constexpr int power = 10;
-    // int tilesX = (screen_width/scale);
-    // int tilesY = screen_height/scale;
-    constexpr int tilesX = ipow(2, power);
-    constexpr int tilesY = ipow(2, power);
+    // constexpr int power = 10;
+    // // int tilesX = (screen_width/scale);
+    // // int tilesY = screen_height/scale;
+    // constexpr int tilesX = ipow(2, power);
+    // constexpr int tilesY = ipow(2, power);
 
     // auto pixels = new GLubyte[tilesX*tilesY*3];
     //auto pixels = new GLubyte[tilesX*tilesY*3];

@@ -194,7 +194,7 @@ canvas {
 #bar-parent {
     display: grid;
     grid-template-columns: 1vw 3vw auto;
-    grid-template-rows: 25vh 2.5vh 5vh 5vh 5vh 5vh 5vh 5vh 5vh 5vh 5vh 2.5vh 100vh auto;
+    grid-template-rows: 25vh 2.5vh repeat(9, 5vh) 2.5vh 100vh auto;
     pointer-events: none
 }
 

@@ -1,102 +1,32 @@
+#pragma once
+
 #include <SDL_opengles2.h>
 #include <SDL.h>
 #include "v2d.h"
 #include <emscripten.h>
-#include <functional>
-#include <iostream>
-#include <filesystem>
-#include <limits>
-#include <fstream>
-#include <iterator>
-#include <vector>
 #include <list>
-#include <numeric>
-#pragma once
-// class Gene;
 
-uint16_t screen_width, screen_height;
-float zoomPhysics[3], scale;
-v2d panPhysics[3], offset;
-bool isMouseDown;
-bool firefox;
-GLuint gridProgram, tilesProgram, tiles2Program, fbo, textureID;
-SDL_Window *window;
-std::list<float> frameAvg;
-bool reverse_a = 0;
+#include "settings.hpp"
 
-bool randDensity(int number){
-    return (rand() % number) == number/2;
-}
+extern uint16_t screen_width;
+extern uint16_t screen_height;
+extern float zoomPhysics[3];
+extern float scale;
+extern v2d panPhysics[3];
+extern v2d offset;
+extern bool isMouseDown;
+extern bool firefox;
+extern GLuint gridProgram;
+extern GLuint tilesProgram;
+extern GLuint tiles2Program;
+extern GLuint fbo;
+extern GLuint textureID;
+extern GLubyte *pixels;
+extern SDL_Window *window;
+extern std::list<float> frameAvg;
+extern bool reverse_a;
+extern Settings stg;
 
-void getScreenSize(){
-    screen_width = (uint16_t)EM_ASM_INT({
-        var width = window.innerWidth
-        || document.documentElement.clientWidth
-        || document.body.clientWidth;
-        return width;
-    });
-    screen_height = (uint16_t)EM_ASM_INT({
-        var height = window.innerHeight
-        || document.documentElement.clientHeight
-        || document.body.clientHeight;
-        return height;
-    });
-    // screen_width = screen_width > stg.init_width ? stg.init_width  : screen_width;
-    // screen_height = screen_height > stg.init_height? stg.init_height : screen_height;
-}
-
-void getBrowser(){
-    firefox = (uint16_t)EM_ASM_INT({
-        // var browser = bowser.detect
-        // var bowser;
-        // var browser = bowser.getParser(window.navigator.userAgent);
-        // var name = browser.getBrowser().name;
-        // return name=="Firefox";
-        return 0;
-    });
-}
-
-constexpr int64_t ipow(int64_t base, int exp, int64_t result = 1) {
-  return exp < 1 ? result : ipow(base*base, exp/2, (exp % 2) ? result*base : result);
-}
-constexpr int power = 8;
-// constexpr int tilesX = ipow(2, power) * 2;
-// constexpr int tilesY = ipow(2, power);
-// int tilesX;// = screen_width * 2;
-// int tilesY;// = screen_height * 2;
-GLubyte *pixels;//[tilesX*tilesY*3] = {255};
-struct Settings{
-    uint16_t screen_width, screen_height;
-    uint16_t map_width, map_height;
-    // const uint16_t tilesX, tilesY;
-    // uint16_t init_width, init_height;
-    float scale, drag;
-    bool trails;
-    float speed;
-};
-Settings stg = {
-    0, 0, // Screen Dimensions (init to zero, set later)
-    0, 0, // Map Dimensions
-    0, // Scale
-    1.3f, // Drag Factor
-    false,
-    1
-};
-struct Grid{
-    Grid(Grid _src, Settings _stg):
-        xDivs(_src.xDivs),
-        yDivs(_src.yDivs),
-        tWidth(_stg.map_width / _src.xDivs),
-        tHeight(_stg.map_height / _src.yDivs){
-    }
-    Grid(uint32_t _xDivs, uint32_t _yDivs, Settings _stg):
-        xDivs(_xDivs),
-        yDivs(_yDivs),
-        tWidth(_stg.map_width / xDivs),
-        tHeight(_stg.map_height / yDivs){
-    }
-    uint32_t xDivs;
-    uint32_t yDivs;
-    uint32_t tWidth;
-    uint32_t tHeight;
-};
+bool randDensity(int number);
+void getScreenSize();
+void getBrowser();

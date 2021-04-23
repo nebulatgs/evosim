@@ -4,6 +4,7 @@
 #include "level.hpp"
 #include "render.hpp"
 #include <unistd.h>
+#include <time.h>
 Level *lvl;
 v2d cursor = v2d(0,0);
 bool frame;
@@ -15,9 +16,9 @@ float _speed;
 //     for(it = list.begin(); it != list.end(); it++) avg += *it;
 //     avg /= list.size();
 // }
-float listAvg(const std::list<float> &list){
-    std::accumulate(list.begin(), list.end(), 0.0f) / list.size();
-}
+// float listAvg(const std::list<float> &list){
+//     std::accumulate(list.begin(), list.end(), 0.0f) / list.size();
+// }
 uint64_t startTime, endTime;
 
 #define  Pr  .299
@@ -154,43 +155,43 @@ int main()
     initGL(window);
 
     ecosystem.push_back({
-        {{{1}, 1}},
-        {{{2}, 2}},
-        {{{2}, 3}}
+        {{1, 1}},
+        {{2, 2}},
+        {{2, 3}}
     });
-    Grid grid = Grid(stg.map_width, stg.map_height, stg);
+    //Grid grid = Grid(stg.map_width, stg.map_height, stg);
     lvl = new Level();
-    lvl->oldTime = time(NULL) - ((6 / stg.speed) - 1);
 
     // Push food cells
-    for(int i = 0; i < grid.xDivs * grid.yDivs; i++){
-        int x = i % grid.xDivs * grid.tWidth;
+    for(int i = 0; i < stg.map_width * stg.map_height; i++){
+        int x = i % stg.map_width;
         x += 1;
-        int y = i / grid.xDivs * grid.tHeight;
+        int y = i / stg.map_width;
         y += 1;
-        if(x == 0 || y == 0 || i % grid.xDivs == grid.xDivs - 1 || i / grid.xDivs == grid.yDivs - 1){
-            lvl->things.push_back(new Border(
+        if(x == 0 || y == 0 || i % stg.map_width == stg.map_width - 1 || i / stg.map_width == stg.map_height - 1){
+            lvl->add(new Border(
                 x,
                 y
             ));
             continue;
         }
-        if(randDensity(1000)){
-        lvl->things.push_back(new Resource(
-            x,
-            y,
-            1
-        ));}
-        if(randDensity(10000)){
-        lvl->things.push_back(new Creature(
-            x,
-            y,
-            0
+        if(randDensity(1000)) {
+            lvl->add(new Food(
+                x,
+                y,
+                1
+            ));
+        }
+        if(randDensity(10000)) {
+            lvl->add(new Creature(
+                x,
+                y,
+                0
         ));}
     }
     // std::cout << lvl->things[14]->x << '\n';
 
-    emscripten_set_main_loop(main_loop, -1, true);
+    emscripten_set_main_loop(main_loop, 0, true);
 
     return EXIT_SUCCESS;
 }

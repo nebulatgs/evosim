@@ -1,43 +1,38 @@
+#include <time.h>
+
 #include "level.hpp"
-// #include "globals.hpp"
-// #include <SDL_opengles2.h>
-#include <SDL.h>
+#include "globals.hpp"
 #include <iostream>
-// extern GLubyte* pixels;
-struct Settings{
-    uint16_t screen_width, screen_height;
-    uint16_t map_width, map_height;
-    // const uint16_t tilesX, tilesY;
-    // uint16_t init_width, init_height;
-    float scale, drag;
-    bool trails;
-    float speed;
-};
-// enum class TileType {Wall, Resource, Creature};
-extern Settings stg;
-// Level::Level(){}
 
+Level::Level() {
+    oldTime = time(NULL) - ((6 / stg.speed) - 1);
+}
 
+void Level::add(Food* food) {
+    foods.push_back(food);
+}
 
-// void Level::draw(uint8_t *pixels){
-//     // SDL_SetRenderDrawColor(renderer, 21, 21, 21, 255);
-//     // SDL_RenderClear(renderer);
-//     for(auto x : tiles){
-//         x -> draw(pixels);
-//     }
-//     // int i, j, c;
-//     // int index = 0;
-//     // for (i = 0; i < tilesX; i++) {
-//     //     for (j = 0; j < tilesY; j++) {
-//     //         pixels[index++] = i < 5 && j < 5 ? 255 : 0;
-//     //         pixels[index++] = i < 5 && j < 5 ? 255 : 0;
-//     //         pixels[index++] = i < 5 && j < 5 ? 255 : 0;        
-//     //     }
-//     // }
-//     // SDL_RenderPresent(renderer);
-// }
+void Level::add(Creature* creature) {
+    creatures.push_back(creature);
+}
+
+void Level::add(Border* border) {
+    borders.push_back(border);
+}
+
+int Level::getFoodCount() {
+    return foods.size();
+}
+
+Thing* Level::getFood(int i) {
+    return foods[i];
+}
+
+bool Level::isAntibiotic() {
+    return antibiotic;
+}
+
 void Level::update(uint8_t *pixels){
-    int x = things.size();
     if(time(NULL) - oldTime > (6 / stg.speed)){
         oldTime = time(NULL);
         antibiotic = true;
@@ -49,26 +44,40 @@ void Level::update(uint8_t *pixels){
     else{
         antibiotic = false;
     }
-    // oldTime =  ? time(NULL) : oldTime;
-    bool overPop;
-    // overPop = things.size() > 3000;
-    for(int i = 0; i < x; i++){
-        bool death = things[i] -> update(pixels, this);
-        if (death || (overPop && rand() % 1000 > 900 && things[i]->type == TileType::Creature)){
-            // things[i] = new Border(things[i]->pos.x, things[i]->pos.y);
-            delete things[i];
-            things.erase(things.begin() + i);
-            x--;
+    update(foods);
+    update(creatures);
+    update(borders);
+}
+
+template<typename T>
+void Level::update(std::vector<T>& things)
+{
+    for(auto iter = things.begin(); iter != things.end();)
+    {
+		// std::cout << (*iter)->pos.x << '\n';
+		if((*iter)->pos.x == 0)
+			return;
+        bool death = (*iter)->update(pixels, this);
+        if (death)
+        {
+            delete *iter;
+            iter = things.erase(iter);
         }
-        
+        else
+        {
+            ++iter;
+        }
     }
-    // std::cout << (int)things.size() << '\n';
 }
 
 Level::~Level(){
-    for(auto thing : things){
-        delete thing;
-        thing = nullptr;
+    for(auto food : foods){
+        delete food;
     }
-    things.empty();
+    for(auto creature : creatures){
+        delete creature;
+    }
+    for(auto border : borders){
+        delete border;
+    }
 }
