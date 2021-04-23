@@ -22,6 +22,7 @@ bool firefox;
 GLuint gridProgram, tilesProgram, tiles2Program, fbo, textureID;
 SDL_Window *window;
 std::list<float> frameAvg;
+bool reverse_a = 0;
 
 bool randDensity(int number){
     return (rand() % number) == number/2;
@@ -47,9 +48,11 @@ void getScreenSize(){
 void getBrowser(){
     firefox = (uint16_t)EM_ASM_INT({
         // var browser = bowser.detect
-        var browser = bowser.getParser(window.navigator.userAgent);
-        var name = browser.getBrowser().name;
-        return name=="Firefox";
+        // var bowser;
+        // var browser = bowser.getParser(window.navigator.userAgent);
+        // var name = browser.getBrowser().name;
+        // return name=="Firefox";
+        return 0;
     });
 }
 

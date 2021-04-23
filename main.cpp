@@ -35,9 +35,9 @@ void changeSaturation(double *R, double *G, double *B, double change) {
   *B=P+((*B)-P)*change; }
 extern "C" void EMSCRIPTEN_KEEPALIVE setFade(bool fade) { stg.trails = fade; }
 extern "C" void EMSCRIPTEN_KEEPALIVE changePause(bool pause, float speed) { stg.speed = pause ? 0 : speed; _speed = speed;}
-extern "C" void EMSCRIPTEN_KEEPALIVE setSpeed(float speed) { stg.speed = speed; 
+extern "C" void EMSCRIPTEN_KEEPALIVE setSpeed(float speed) { stg.speed = speed; }
+extern "C" void EMSCRIPTEN_KEEPALIVE reverseA(bool a) { reverse_a = a; }
 // std::cout << stg.speed << '\n';
-}
 extern "C" void EMSCRIPTEN_KEEPALIVE nextFrame(float speed) { _speed = speed; frame = 1;}
 
 int main();
@@ -160,7 +160,7 @@ int main()
     });
     Grid grid = Grid(stg.map_width, stg.map_height, stg);
     lvl = new Level();
-    lvl->oldTime = time(NULL) - 5;
+    lvl->oldTime = time(NULL) - ((6 / stg.speed) - 1);
 
     // Push food cells
     for(int i = 0; i < grid.xDivs * grid.yDivs; i++){

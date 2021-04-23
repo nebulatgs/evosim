@@ -76,7 +76,8 @@ class v2d {
         float cs = cos(rad), sn = sin(rad);
         float px = x * cs - y * sn; 
         float py = x * sn + y * cs;
-        return v2d(px, py);
+        set(px, py);
+        return *this;
     }
     float x;
     float y;

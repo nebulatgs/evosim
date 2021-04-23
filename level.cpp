@@ -13,6 +13,7 @@ struct Settings{
     bool trails;
     float speed;
 };
+// enum class TileType {Wall, Resource, Creature};
 extern Settings stg;
 // Level::Level(){}
 
@@ -37,7 +38,7 @@ extern Settings stg;
 // }
 void Level::update(uint8_t *pixels){
     int x = things.size();
-    if(time(NULL) - oldTime > 6){
+    if(time(NULL) - oldTime > (6 / stg.speed)){
         oldTime = time(NULL);
         antibiotic = true;
         for (int i = 0; i < stg.map_height * stg.map_width * 3; i+=3){
@@ -49,9 +50,11 @@ void Level::update(uint8_t *pixels){
         antibiotic = false;
     }
     // oldTime =  ? time(NULL) : oldTime;
+    bool overPop;
+    // overPop = things.size() > 3000;
     for(int i = 0; i < x; i++){
         bool death = things[i] -> update(pixels, this);
-        if (death){
+        if (death || (overPop && rand() % 1000 > 900 && things[i]->type == TileType::Creature)){
             // things[i] = new Border(things[i]->pos.x, things[i]->pos.y);
             delete things[i];
             things.erase(things.begin() + i);

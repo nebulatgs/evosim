@@ -6,7 +6,7 @@
 #pragma once
 
 enum class mutationType;
-enum class TileType;
+enum class TileType {Wall, Resource, Creature};
 // class v2d;
 class SDL_Renderer;
 struct Gene{
@@ -18,10 +18,11 @@ class Level;
 // Represents a single tile on the world grid
 class Tile{
     public:
-        Tile(int x, int y, uint32_t color);
+        Tile(int x, int y, v2d offset, uint32_t color);
         virtual void update(uint8_t *pixels, uint32_t color);
         // virtual void update(std::vector<Tile*> *tiles);
         int x, y;
+        v2d offset;
         // int width, height;
         TileType type;
         uint32_t color;
@@ -48,6 +49,7 @@ class Resource : public Thing{
         bool update(uint8_t *pixels, Level* lvl);
         // void randomize();
         bool food;
+        TileType type = TileType::Resource;
         uint32_t color = 0xFF6E9055;
 };
 
@@ -81,10 +83,12 @@ class Creature : public Thing{
         bool reproduce();
         bool moveWander();
         bool SetARes(int strength);
+        bool SetSize(int _size);
         void mutate();
         uint32_t geneIndex;
 
     public:
+        TileType type = TileType::Creature;
         std::vector<Gene> genome;
         // std::vector<uint8_t> genome;
         int mutate(int count, mutationType mutation);
@@ -107,6 +111,7 @@ class Creature : public Thing{
 
 class Border : public Thing{
     public:
+        TileType type = TileType::Wall;
         Border(int x, int y);
         bool update(uint8_t *pixels, Level* lvl);
         uint32_t color = 0xFF926E5F;

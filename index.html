@@ -55,6 +55,12 @@
         </div>
         <div>
             <br>
+            <input type="checkbox" id="reverseA" v-model="reverseA" onchange="toggleReverseA(this)">
+            <label for="reverseA"> reverse antibiotic</label>
+
+        </div>
+        <div>
+            <br>
             <p>speed:</p>
             <input type="range" min="0" max="2" step="0.01" id="speed" v-model="ralignment" onchange="changeSpeed(this)">
 

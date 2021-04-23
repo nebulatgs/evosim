@@ -3,7 +3,7 @@
 #include "proteins.hpp"
 // extern int tilesX, tilesY;
 enum class mutationType {pSub, pIns, pDel, gInv, gDel};
-enum class TileType {Wall, Resource, Creature};
+// enum class TileType {Wall, Resource, Creature};
 extern std::vector<std::vector<Gene>> ecosystem;
 
 class Level{
@@ -66,7 +66,8 @@ extern bool randDensity(int number);
 
 Creature::Creature(int x, int y, int species) : Thing(x, y, TileType::Creature), species(species), size(1){
     // genome = ecosystem[species];
-    tiles.push_back(Tile(pos.x, pos.y, color));
+    tiles.push_back(Tile(pos.x, pos.y, {0,0}, color));
+    genome.clear();
     genome = getDefaults();
 }
 int Creature::readNext(){
@@ -82,24 +83,42 @@ void Creature::reset(){
 bool Creature::findFood(int radius, void* buffer){
     // std::cout << radius << '\n';
     int index = 0;
-    v2d distance = v2d(99999,99999);
+    // v2d distance = v2d(99999,99999);
+    float distance = 99999;
     int food = -1;
-    for(auto thing : current_lvl->things){
+    // v2d vision = v2d(radius, radius);
+    // int r = rand() % current_lvl->things.size() / 2;
+    int r = 0;
+    int d = r + current_lvl->things.size() / 1;
+    // int d = r - 500 > 0 ? r - 500 : r / 10;
+    // int d = r / 1000;
+    for(int i = r; i < d; i++){
+        auto thing = current_lvl->things[i];
         if(thing->type == TileType::Resource){
             if (pos.x == thing->pos.x && pos.y == thing->pos.y){                    
                 return 0;
             }                
-            v2d dist = v2d(abs(thing->pos.x - pos.x),abs(thing->pos.y - pos.y));                
-            v2d vision = v2d(radius, radius);
-            if(dist < distance && dist < vision && ((Resource*)thing)->food){
+            // v2d dist = v2d(abs(thing->pos.x - pos.x),abs(thing->pos.y - pos.y));
+            float dist = pos.sqrDist(thing->pos);
+            if(dist < distance && dist < radius*radius && ((Resource*)thing)->food){
                 distance = dist;
                 food = index;
             }                
         }
         index++;
     }
+    if(food == -1)
+        return 1;
+    // if(closest_food->pos == foodPos){
+    //     if(pos.sqrDist(foodPos) > pos.sqrDist(current_lvl->things[food]->pos) - 100)
+            *(Resource**)buffer = (Resource*)(current_lvl->things[food]);
+        // else
+        //    *(Resource**)buffer = (Resource*)closest_food; 
+    // }
+    // else{
+    //     *(Resource**)buffer = (Resource*)(current_lvl->things[food]);
+    // }
     // *(Thing**)buffer = search[index];
-    *(int*)buffer = food;
     return 0;
 }
 
@@ -135,11 +154,16 @@ bool Creature::reproduce(){
     if(energy > 500){
         energy -= 250;
         // mutate();
-        Creature* child = new Creature(pos.x, pos.y+1, species);
+        Creature* child = new Creature(pos.x, pos.y, species);
+        v2d childDir = v2d(1,1);
+        childDir.rotate(((float)rand() / (float)RAND_MAX) * M_PI * 2);
+        childDir.setLen(size);
+        child->pos += childDir / 2;
+        pos -= childDir / 2;
         child->genome = genome;  
         child->mutate();    
-        uint8_t* childColor = (uint8_t*)(&child->color);        
-        childColor[1] = (rand() % 256);                
+        // uint8_t* childColor = (uint8_t*)(&child->color);        
+        // childColor[1] = (rand() % 256);                
         child->found_food = 0; 
         current_lvl->things.push_back(child);
     }
@@ -170,11 +194,18 @@ void Creature::mutate(){
     //     else
     //         genome[i].bases[j] = (int)((float)rand() / (float)RAND_MAX) * 3;
     // // }
-    genome[7].bases[rand() % 3] = rand() % 33;
+    if(rand() % 100 > 75){
+        int r = rand() % genome.size();
+        if(!(proteinLUT[genome[r].toString()] > Protein::instr_sep))
+            genome[r].bases[rand() % 3] = rand() % 33;
+    }
 }
 bool Creature::eatFood(){
-    if(abs(pos.x - closest_food->pos.x) <= 1 && abs(pos.y - closest_food->pos.y) <= 1 && closest_food->food){
-        closest_food->randomize();        
+    if(abs(pos.x - closest_food->pos.x) <= size/2 &&
+      abs(pos.y - closest_food->pos.y) <= size/2 &&
+      closest_food->food){
+        closest_food->randomize();  
+        // closest_food -> food = 0;      
         found_food = false;
         energy += 250;
     }
@@ -183,13 +214,35 @@ bool Creature::eatFood(){
     }
     return 0;
 }
+bool Creature::SetSize(int _size){
+    if (_size != size){
+        size = (_size >> 4) + 2;
+        tiles.clear();
+        int r = size >> 1;
+        for (float ty = 0; ty < 2.0 * r; ty++) {
+            for (float tx = 0; tx < 2 * r; tx++) {
+                float deltaX = r - tx;
+                float deltaY = r - ty;
+                float distance = sqrt(deltaX * deltaX + deltaY * deltaY);
+                float col = r - distance;
+                if(col > 0)
+                    tiles.push_back(Tile(pos.x, pos.y, v2d(tx - r, ty - r), color));
+            }
+        }
+        // std::cout << _size << "\n";
+    }
+    return 0;
+}
 int Creature::processInstruction(int protein, int memory){
-    int result;
+    Resource* result;
     bool error;
     switch(protein){
         case FindFood:
             error = findFood(memory, &result);
-            closest_food = (Resource*)current_lvl->things[result];
+            if(error)
+                return -1;
+            closest_food = result;
+            foodPos = closest_food->pos;
             break;
         case MoveFood:
             if(memory > -1)
@@ -206,11 +259,13 @@ int Creature::processInstruction(int protein, int memory){
             break;
         case SetA_Res:
             SetARes(memory);
+        case Set_Size:
+            SetSize(memory);
         default:
             error = 1;
     }
-    if(result == -1)
-        return -1;
+    // if(result == -1)
+    //     return -1;
     return error;
 }
 std::vector<Gene> Creature::getDefaults(){
@@ -223,7 +278,10 @@ std::vector<Gene> Creature::getDefaults(){
         {{0, 3, 0}},
         {{1,0,1}}, //Read antibiotic resistance gene
         {{5,5,5}},
-        {{1, 0, 2}}
+        {{1, 0, 2}},
+        {{1,0,3}}, // Read size gene
+        {{5,5,5}},
+        {{1,1,0}}
     };
 }
 bool Creature::processGenome(){
@@ -241,6 +299,7 @@ bool Creature::processGenome(){
                 ltbrain.push(processInstruction(protein, top));
             }
             else{
+                ltbrain.pop();
                 int top = brain.top();
                 brain.pop();
                 ltbrain.push(processInstruction(protein, top));
@@ -254,6 +313,7 @@ bool Creature::processGenome(){
     }
     return 0;
 }
+extern bool reverse_a;
 bool Creature::update(uint8_t *pixels, Level* lvl){            
     // if(!found_food){
     //     closest_food = nullptr;
@@ -282,15 +342,26 @@ bool Creature::update(uint8_t *pixels, Level* lvl){
     if(processGenome()){
         return 1;
     }
-    for(auto tile : tiles){                                                
-            tile.x = pos.x;
-            tile.y = pos.y;
-            tile.update(pixels, color);
+    for(auto tile : tiles){          
+        if(pos.x + tile.offset.x > stg.map_width ||
+           pos.x + tile.offset.x < 0 ||
+           pos.y + tile.offset.y > stg.map_height ||
+           pos.y + tile.offset.y < 0){
+        continue;
+        }                                    
+        tile.x = pos.x + tile.offset.x;
+        tile.y = pos.y + tile.offset.y;
+        tile.update(pixels, color);
     }
     if(current_lvl->antibiotic){
         // if(((float)rand() / (float)RAND_MAX) * a_res < 1){
-        if(!((rand() % 100) < a_res)){
-            return 1;
+        if(reverse_a){
+            if((rand() % 100) < a_res)
+                return 1;
+        }
+        else{
+            if(!((rand() % 100) < a_res))
+                return 1;
         }
     }
     // Am I dead?
@@ -305,11 +376,11 @@ Resource::Resource(int x, int y, bool food):
     Thing(x,y, TileType::Resource),
     food(food){
         if(food)
-            tiles.push_back(Tile(x, y, color));
+            tiles.push_back(Tile(x, y, {0,0}, color));
 }
 
 Border::Border(int x, int y) : Thing(x, y, TileType::Wall){
-    tiles.push_back(Tile(x, y, color));
+    tiles.push_back(Tile(x, y, {0,0}, color));
 }
 
 bool Border::update(uint8_t *pixels, Level* lvl){
@@ -328,8 +399,8 @@ bool Resource::update(uint8_t *pixels, Level* lvl){
             // x = !(bool)(rand() % 50) ? (rand() % stg.map_width) : x;
             // y += 1;
             // randomize();
-            tile.x = pos.x;
-            tile.y = pos.y;
+            tile.x = pos.x + tile.offset.x;
+            tile.y = pos.y + tile.offset.y;
             tile.update(pixels, color);
         }
         return 0;
@@ -347,9 +418,10 @@ void Tile::update(uint8_t *pixels, uint32_t color){
     pixels[index++] = ((uint8_t*)&color)[1];
     pixels[index++] = ((uint8_t*)&color)[2];
 }
-Tile::Tile(int x, int y, uint32_t color):
+Tile::Tile(int x, int y, v2d offset, uint32_t color):
     x(x),
     y(y),
+    offset(offset),
     color(color){
 }
 Thing::Thing(int x, int y, TileType type):

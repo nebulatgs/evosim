@@ -3,7 +3,7 @@
 #include <stack>
 #include <numeric>
 struct Gene;
-enum Protein {vision, color, size, speed, a_res, SetA_Res, FindFood, MoveFood, EatFood, Reproduce, instr_sep = 4};
+enum Protein {vision, color, size, speed, a_res, SetA_Res, Set_Size, FindFood, MoveFood, EatFood, Reproduce, instr_sep = 4};
 std::unordered_map<std::string, int> proteinLUT = {
     {"AAA", Protein::FindFood},
     {"AAT", Protein::FindFood},
@@ -23,5 +23,7 @@ std::unordered_map<std::string, int> proteinLUT = {
     {"ACC", Protein::Reproduce},
     {"TAA", Protein::vision},
     {"TAT", Protein::a_res},
-    {"TAG", Protein::SetA_Res}
+    {"TAG", Protein::SetA_Res},
+    {"TAC", Protein::size},
+    {"TTA", Protein::Set_Size},
 };

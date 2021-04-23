@@ -1,14 +1,18 @@
 function toggleFade(checkboxElem) {
-    _setFade(checkboxElem.checked);
+    Module._setFade(checkboxElem.checked);
+}
+
+function toggleReverseA(checkboxElem) {
+    Module._reverseA(checkboxElem.checked);
 }
 
 function changeSpeed(slider) {
     if (!document.getElementById("pauseButton").checked)
-        _setSpeed(slider.value);
+        Module._setSpeed(slider.value);
 }
 
 function togglePause(pause) {
-    _changePause(pause.checked, document.getElementById("speed").value);
+    Module._changePause(pause.checked, document.getElementById("speed").value);
     if (pause.checked)
         toPlay();
     else
@@ -16,7 +20,7 @@ function togglePause(pause) {
 }
 
 function nextFrame() {
-    _nextFrame(document.getElementById("speed").value);
+    Module._nextFrame(document.getElementById("speed").value);
 }
 
 let playAnims = document.getElementsByClassName("toPlay");
@@ -41,7 +45,7 @@ function reset() {
     element.classList.remove('resetAnim'); // reset animation
     void(element.clientWidth); // trigger reflow
     document.getElementById('resetSpin').classList.add('resetAnim'); // start animation
-    _restart();
+    Module._restart();
 }
 
 var browser = bowser.getParser(window.navigator.userAgent);
