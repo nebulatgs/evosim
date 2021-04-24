@@ -1,36 +1,7 @@
-#include <vector>
-#include <string>
-#include <stdint.h>
-#include <stack>
-#include "v2d.h"
-#pragma once
 
-enum class mutationType;
-enum class TileType
-{
-	Wall,
-	Food,
-	Creature
-};
-class SDL_Renderer;
-struct Gene
-{
-	std::vector<uint8_t> bases;
-	std::string toString();
-};
+#include "tile.hpp"
+
 class Level;
-
-// Represents a single tile on the world grid
-class Tile
-{
-public:
-	Tile(int x, int y, v2d offset, uint32_t color);
-	virtual void update(uint8_t *pixels, uint32_t color);
-	int x, y;
-	v2d offset;
-	TileType type;
-	uint32_t color;
-};
 
 class Thing
 {
@@ -100,7 +71,7 @@ public:
 	v2d foodPos = v2d(0, 0);
 	Level *current_lvl = nullptr;
 	int a_res = 0;
-	std::stack<int> ltbrain;
+	std::vector<int> ltbrain;
 	uint32_t geneIndex;
 	TileType type = TileType::Creature;
 	std::vector<Gene> genome;

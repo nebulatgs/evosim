@@ -1,53 +1,10 @@
-#include <iostream>
-#include "tile.hpp"
+#include <time.h>
+
+#include "globals.hpp"
 #include "level.hpp"
 #include "proteins.hpp"
-#include "globals.hpp"
 
-enum class mutationType
-{
-	pSub,
-	pIns,
-	pDel,
-	gInv,
-	gDel
-};
-
-extern std::vector<std::vector<Gene>> ecosystem;
 uint32_t oldCol = 0x3C4CE7;
-
-std::string Gene::toString()
-{
-	std::string concat;
-	for (auto x : bases)
-	{
-		char base;
-		switch (x)
-		{
-		case 0:
-			base = 'A';
-			break;
-
-		case 1:
-			base = 'T';
-			break;
-
-		case 2:
-			base = 'G';
-			break;
-
-		case 3:
-			base = 'C';
-			break;
-
-		default:
-			base = 'C';
-			break;
-		}
-		concat.push_back(base);
-	}
-	return concat;
-}
 
 int Creature::digitConcat(std::vector<int> digits)
 {
@@ -219,12 +176,12 @@ void Creature::mutate()
 	//     else
 	//         genome[i].bases[j] = (int)((float)rand() / (float)RAND_MAX) * 3;
 	// // }
-	if (rand() % 100 > 75)
-	{
-		int r = rand() % genome.size();
-		if (!(proteinLUT[genome[r].toString()] > Protein::instr_sep))
-			genome[r].bases[rand() % 3] = rand() % 33;
-	}
+	// if (rand() % 100 > 75)
+	// {
+	int r = rand() % genome.size();
+	if (!(proteinLUT[genome[r].toString()] > Protein::instr_sep))
+		genome[r].bases[rand() % 3] = rand() % 33;
+	// }
 }
 
 bool Creature::eatFood()
@@ -342,17 +299,17 @@ bool Creature::processGenome()
 			{
 				if (ltbrain.empty())
 					return 1;
-				int top = ltbrain.top();
-				ltbrain.pop();
-				ltbrain.push(processInstruction(protein, top));
+				int top = ltbrain.back();
+				ltbrain.pop_back();
+				ltbrain.push_back(processInstruction(protein, top));
 			}
 			else
 			{
 				if (!ltbrain.empty())
-					ltbrain.pop();
+					ltbrain.pop_back();
 				int top = brain.top();
 				brain.pop();
-				ltbrain.push(processInstruction(protein, top));
+				ltbrain.push_back(processInstruction(protein, top));
 			}
 		}
 		else
@@ -362,6 +319,12 @@ bool Creature::processGenome()
 			brain.push(accumulate(genome[i].bases.begin(), genome[i].bases.end(), 0));
 		}
 	}
+	// for (int i = 0; i < ltbrain.size(); i++)
+	// {
+	// 	ltbrain.pop();
+	// }
+	ltbrain.clear();
+
 	return 0;
 }
 
@@ -475,22 +438,6 @@ bool Food::update(uint8_t *pixels, Level *lvl)
 	{
 		return 1;
 	}
-}
-
-void Tile::update(uint8_t *pixels, uint32_t color)
-{
-	int index = x * 3 + (y * 3 * stg.map_width);
-	if (index > stg.map_height * stg.map_width * 3)
-	{
-		return;
-	}
-	pixels[index++] = ((uint8_t *)&color)[0];
-	pixels[index++] = ((uint8_t *)&color)[1];
-	pixels[index++] = ((uint8_t *)&color)[2];
-}
-
-Tile::Tile(int x, int y, v2d offset, uint32_t color) : x(x), y(y), offset(offset), color(color)
-{
 }
 
 Thing::Thing(int x, int y, TileType type) : type(type)

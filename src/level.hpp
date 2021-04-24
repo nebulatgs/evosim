@@ -3,7 +3,7 @@
 #include <vector>
 #include <stdint.h>
 
-#include "tile.hpp"
+#include "thing.hpp"
 
 class Level {
 public:
