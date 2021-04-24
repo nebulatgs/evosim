@@ -1,7 +1,7 @@
 #include <iostream>
-#include "tile.hpp"
-#include "level.hpp"
-#include "globals.hpp"
+#include "headers/tile.hpp"
+#include "headers/level.hpp"
+#include "headers/globals.hpp"
 
 void Tile::update(uint8_t *pixels, uint32_t color)
 {

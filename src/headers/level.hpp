@@ -4,6 +4,10 @@
 #include <stdint.h>
 
 #include "thing.hpp"
+#include "food.hpp"
+#include "creature.hpp"
+#include "border.hpp"
+
 
 class Level {
 public:

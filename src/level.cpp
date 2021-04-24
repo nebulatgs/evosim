@@ -1,7 +1,7 @@
 #include <time.h>
 
-#include "level.hpp"
-#include "globals.hpp"
+#include "headers/level.hpp"
+#include "headers/globals.hpp"
 #include <iostream>
 
 Level::Level()

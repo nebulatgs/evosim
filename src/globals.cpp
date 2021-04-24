@@ -1,4 +1,4 @@
-#include "globals.hpp"
+#include "headers/globals.hpp"
 
 uint16_t screen_width;
 uint16_t screen_height;

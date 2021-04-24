@@ -1,4 +1,4 @@
-#include "gene.hpp"
+#include "headers/gene.hpp"
 
 enum class mutationType
 {
