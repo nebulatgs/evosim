@@ -60,6 +60,12 @@ if (browserName == "Firefox") {
     firefox.remove();
 }
 
+function setCanvas() {
+    var canvas = document.getElementById("canvas");
+    canvas.setAttribute("style", `width: ${window.screen.width}px; height: ${window.screen.height}px`);
+}
+
+setCanvas();
 // window.addEventListener('mouseup', function(event) {
 //     event.stopImmediatePropagation();
 //     // event.stopPropagation();
@@ -67,4 +73,5 @@ if (browserName == "Firefox") {
 //     // event.cancelable = true;
 //     // event.preventDefault();
 //     // event.cancelBubble();
+// }, true);ent.cancelBubble();
 // }, true);
