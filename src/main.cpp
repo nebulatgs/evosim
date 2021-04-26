@@ -144,9 +144,17 @@ void main_loop()
 		{
 			for (int i = 0; i < stg.map_height * stg.map_width * 3; i += 3)
 			{
+				// double b = pixels[i];
+				// double g = pixels[i + 1];
+				// double r= pixels[i + 2];
+				// changeSaturation(&r, &g, &b, 0.9);
+				// pixels[i] = b;
+				// pixels[i + 1] = g;
+				// pixels[i + 2] = r;
 				pixels[i] = pixels[i] <= 0x27 ? 0 : pixels[i] - 10;
 				pixels[i + 1] = pixels[i + 1] <= 0x27 ? 0 : pixels[i + 1] - 10;
 				pixels[i + 2] = pixels[i + 2] <= 0x27 ? 0 : pixels[i + 2] * 2 - 10;
+
 			}
 		}
 		lvl->update(pixels);
