@@ -102,25 +102,28 @@ v2d *processPhysics(v2d *physics, v2d drag, v2d clipStart, v2d clipEnd)
 	physics[0] /= drag;
 
 	// Clip Position
-	physics[2].x = physics[2].x > clipEnd.x ? clipEnd.x : physics[2].x;
-	physics[2].y = physics[2].y > clipEnd.y ? clipEnd.y : physics[2].y;
+	// physics[2].x = physics[2].x > clipEnd.x ? clipEnd.x : physics[2].x;
+	// physics[2].y = physics[2].y > clipEnd.y ? clipEnd.y : physics[2].y;
+
+	// physics[2].x = physics[2].x < clipStart.x ? clipStart.x : physics[2].x;
+	// physics[2].y = physics[2].y < clipStart.y ? clipStart.y : physics[2].y;
 
 	v2d adjVel = physics[1] * physics[2];
 	physics[2] += adjVel;
 	physics[1] /= drag;
 
-	if (physics[2].x < clipStart.x)
-	{
-		physics[0].x = 0;
-		physics[1].x = 0;
-		physics[2].x = clipStart.x;
-	}
-	if (physics[2].y < clipStart.y)
-	{
-		physics[0].y = 0;
-		physics[1].y = 0;
-		physics[2].y = clipStart.y;
-	}
+	// if (physics[2].x < clipStart.x)
+	// {
+	// 	physics[0].x = 0;
+	// 	physics[1].x = 0;
+	// 	physics[2].x = clipStart.x;
+	// }
+	// if (physics[2].y < clipStart.y)
+	// {
+	// 	physics[0].y = 0;
+	// 	physics[1].y = 0;
+	// 	physics[2].y = clipStart.y;
+	// }
 
 	return physics;
 }

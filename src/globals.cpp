@@ -32,15 +32,17 @@ bool randDensity(int number){
 
 void getScreenSize(){
     screen_width = (uint16_t)EM_ASM_INT({
-        var width = window.innerWidth
-        || document.documentElement.clientWidth
-        || document.body.clientWidth;
+        // var width = window.innerWidth
+        // || document.documentElement.clientWidth
+        // || document.body.clientWidth;
+		var width = window.screen.width;
         return width;
     });
     screen_height = (uint16_t)EM_ASM_INT({
-        var height = window.innerHeight
-        || document.documentElement.clientHeight
-        || document.body.clientHeight;
+        // var height = window.innerHeight
+        // || document.documentElement.clientHeight
+        // || document.body.clientHeight;
+		var height = window.screen.height;
         return height;
     });
     // screen_width = screen_width > stg.init_width ? stg.init_width  : screen_width;

@@ -69,6 +69,9 @@ void main_loop()
 	{
 		stg.speed = _speed;
 	}
+	// if (stg.speed == 0){
+	// 	return;
+	// }
 	endTime = SDL_GetPerformanceCounter();
 	float elapsed = (endTime - startTime) / (float)SDL_GetPerformanceFrequency();
 	frameAvg.push_back(1.0f / elapsed);
@@ -84,53 +87,70 @@ void main_loop()
 	handleEvents(&cursor, zoomPhysics, panPhysics, 1.0f, 50.0f);
 
 	// Calculate zoom and pan
-	float maxScale = 1.0f;
+	float maxScale = ((float)screen_width / (float)stg.map_width) / 2.0f;
 	stg.scale = processPhysics(zoomPhysics, stg.drag, maxScale, 50)[2];
-	// v2d clipEnd = {stg.map_width * stg.scale * 2 - (float)stg.map_width, stg.map_height * stg.scale * 2 - (float)stg.map_height};
-	// v2d clipStart = {-(stg.map_width * stg.scale * 2 - (float)stg.map_width)/2, -(stg.map_height * stg.scale * 2 - (float)stg.map_height)/2};
-	v2d clipEnd = {stg.map_width * maxScale * stg.scale * 2 - (float)screen_width, stg.map_height * maxScale * stg.scale * 2 - (float)screen_height};
-	v2d clipStart = {-(stg.map_width * maxScale * stg.scale * 2 - (float)screen_width) / 2, -(stg.map_height * maxScale * stg.scale * 2 - (float)screen_height) / 2};
-	// std::cout << clipEnd.x << '\n';
+	
+	// v2d clipEnd = {stg.map_width * maxScale * stg.scale * 2 - (float)(stg.map_width * 2), stg.map_height * maxScale * stg.scale * 2 - (float)(stg.map_height * 2)};
+	// v2d clipStart = {-(stg.map_width * maxScale * stg.scale * 2 - (float)(stg.map_width * 2)) / 2, -(stg.map_height * maxScale * stg.scale * 2 - (float)(stg.map_height * 2)) / 2};
+	
+	v2d clipEnd = {(float)screen_width * stg.scale - (float)screen_width, (float)screen_height * stg.scale - (float)screen_height};
+	// v2d clipStart = {-(stg.map_width * maxScale * stg.scale * 2 - (float)(stg.map_width * 2)) / 2, -(stg.map_height * maxScale * stg.scale * 2 - (float)(stg.map_height * 2)) / 2};
+	v2d clipStart = {0, 0};
+	
 	offset = processPhysics(panPhysics, {stg.drag, stg.drag}, clipStart, clipEnd)[2];
+
 	v2d temp = cursor;
-	temp.x /= stg.map_width / 2;
-	temp.y = stg.map_height - temp.y;
-	temp.y /= stg.map_height / 2;
-	temp.y += 2;
-	// std::cout << temp.y << '\n';
+	temp.x /= screen_width / (4.0f * maxScale);
+	temp.y = screen_height - temp.y;
+	temp.y /= screen_height / (4.0f * maxScale);
+	// temp.y += 2;
+	// emscripten_log(0, "%f, %f", offset.x, offset.y);
+	offset += v2d(stg.map_width / (2 * maxScale), stg.map_height / (2 * maxScale)) * v2d(stg.scale - maxScale, stg.scale - maxScale) * temp;
+
+	panPhysics[2].x = offset.x < clipStart.x ? panPhysics[2].x - (offset.x - clipStart.x) : panPhysics[2].x;
+	panPhysics[2].y = offset.y < clipStart.y ? panPhysics[2].y - (offset.y - clipStart.y) : panPhysics[2].y;
+
+	panPhysics[2].x = offset.x > clipEnd.x ? panPhysics[2].x - (offset.x - clipEnd.x) : panPhysics[2].x;
+	panPhysics[2].y = offset.y > clipEnd.y ? panPhysics[2].y - (offset.y - clipEnd.y) : panPhysics[2].y;
+
+	offset = processPhysics(panPhysics, {stg.drag, stg.drag}, clipStart, clipEnd)[2];
 	offset += v2d(stg.map_width / (2 * maxScale), stg.map_height / (2 * maxScale)) * v2d(stg.scale - maxScale, stg.scale - maxScale) * temp;
 
 	offset.x = offset.x > clipEnd.x ? clipEnd.x : offset.x;
 	offset.y = offset.y > clipEnd.y ? clipEnd.y : offset.y;
 
-	offset.x = offset.x < clipStart.x ? clipStart.x : offset.x;
-	offset.y = offset.y < clipStart.y ? clipStart.y : offset.y;
 
-	// offset /= 2;
-	// std::cout << stg.scale << '\n';
+	offset.x = offset.x < clipStart.x ? 0 : offset.x;
+	offset.y = offset.y < clipStart.y ? 0 : offset.y;
+
+
 
 	// Set canvas size and buffer the vertices for the quad
 	setCanvas();
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
 	// Clear the screen
-	glClearColor(0.086f, 0.086f, 0.086f, 1.0f);
+	glClearColor(0.086f, 0.086f, 0.086f, 0.0f);
+	// glClearColor(1.0, 0.914, 0.953, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	// std::cout << offset.x << '\n';
-	if (!stg.trails)
-		memset(pixels, 0, stg.map_height * stg.map_width * 3);
-	else
-	{
-		for (int i = 0; i < stg.map_height * stg.map_width * 3; i += 3)
-		{
-			pixels[i] = pixels[i] <= 0x27 ? 0 : pixels[i] - 1;
-			pixels[i + 1] = pixels[i + 1] <= 0x27 ? 0 : pixels[i + 1] - 1;
-			pixels[i + 2] = pixels[i + 2] <= 0x27 ? 0 : pixels[i + 2] * 2 - 1;
-		}
-	}
 
-	lvl->update(pixels);
+	if (stg.speed != 0)
+	{
+		if (!stg.trails)
+			memset(pixels, 0, stg.map_height * stg.map_width * 3);
+		else
+		{
+			for (int i = 0; i < stg.map_height * stg.map_width * 3; i += 3)
+			{
+				pixels[i] = pixels[i] <= 0x27 ? 0 : pixels[i] - 10;
+				pixels[i + 1] = pixels[i + 1] <= 0x27 ? 0 : pixels[i + 1] - 10;
+				pixels[i + 2] = pixels[i + 2] <= 0x27 ? 0 : pixels[i + 2] * 2 - 10;
+			}
+		}
+		lvl->update(pixels);
+	}
 	glGenFramebuffers(1, &fbo);
 	drawTiles();
 
@@ -165,6 +185,7 @@ int main()
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+	SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 0);
 	SDL_GL_SetSwapInterval(1);
 
 	initGL(window);
@@ -179,13 +200,13 @@ int main()
 		x += 1;
 		int y = i / stg.map_width;
 		y += 1;
-		if (x == 0 || y == 0 || i % stg.map_width == stg.map_width - 1 || i / stg.map_width == stg.map_height - 1)
-		{
-			lvl->add(new Border(
-				x,
-				y));
-			continue;
-		}
+		// if (x == 0 || y == 0 || i % stg.map_width == stg.map_width - 1 || i / stg.map_width == stg.map_height - 1)
+		// {
+		// 	lvl->add(new Border(
+		// 		x,
+		// 		y));
+		// 	continue;
+		// }
 		if (randDensity(1000))
 		{
 			lvl->add(new Food(

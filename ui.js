@@ -59,3 +59,12 @@ if (browserName == "Firefox") {
     firefox.innerHTML = "";
     firefox.remove();
 }
+
+// window.addEventListener('mouseup', function(event) {
+//     event.stopImmediatePropagation();
+//     // event.stopPropagation();
+//     // event.defaultPrevented = false;
+//     // event.cancelable = true;
+//     // event.preventDefault();
+//     // event.cancelBubble();
+// }, true);

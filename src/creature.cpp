@@ -11,12 +11,15 @@ std::vector<Gene> Creature::getDefaults()
 		{{2, 0, 0}},
 		{{9, 9, 9}},
 		{{0, 0, 0}},
+		
 		{{0, 1, 0}},
 		{{0, 2, 0}},
 		{{0, 3, 0}},
+
 		{{1, 0, 1}}, //Read antibiotic resistance gene
 		{{5, 5, 5}},
 		{{1, 0, 2}},
+
 		{{1, 0, 3}}, // Read size gene
 		{{5, 5, 5}},
 		{{1, 1, 0}}};
