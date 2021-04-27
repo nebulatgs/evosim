@@ -1,0 +1,21 @@
+{
+    "name": "Evosim",
+    "short_name": "Evosim",
+    "start_url": "index.html",
+    "display": "minimal-ui",
+    "background_color": "#2a324b",
+    "theme_color": "#b7c3f3",
+    "scope": ".",
+    "description": "WASM Genetic Simulation",
+    "icons": [{
+            "src": "icon512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        },
+        {
+            "src": "icon192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        }
+    ]
+}

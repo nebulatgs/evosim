@@ -5,6 +5,14 @@
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <link rel="stylesheet" href="style.css">
+    <!-- Meta Tags required for
+       Progressive Web App -->
+    <meta name="apple-mobile-web-app-status-bar" content="#2a324b">
+    <meta name="theme-color" content="#2a324b">
+
+    <!-- Manifest File link -->
+    <link rel="manifest" href="manifest.webmanifest">
+
     <!-- <link rel="stylesheet" href="boid.css"> -->
     <!-- <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script> -->
     <script src="bowser.js"></script>
@@ -197,7 +205,25 @@
 
     </div>
     <script src="ui.js"></script>
+    <script src="serviceworker.js"></script>
+    <script>
+        window.addEventListener('load', () => {
+            registerSW();
+        });
 
+        // Register the Service Worker
+        async function registerSW() {
+            if ('serviceWorker' in navigator) {
+                try {
+                    await navigator
+                        .serviceWorker
+                        .register('serviceworker.js');
+                } catch (e) {
+                    console.log('SW registration failed');
+                }
+            }
+        }
+    </script>
 </body>
 
 </html>
