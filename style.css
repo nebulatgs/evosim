@@ -63,6 +63,8 @@ canvas {
 }
 
 #container {
+    /* display: flex;
+    flex-direction: column; */
     height: 90%;
     margin-left: auto;
     /* padding: 10px 30px 50px 30px; */
@@ -170,13 +172,15 @@ input[type="range"]:focus {
 }
 
 input[type="range"]::-webkit-slider-runnable-track {
-    background: #494368;
+    /* background: #494368; */
+    background: #363244;
     height: 1.2em;
     border-radius: 0.5em;
 }
 
 input[type="range"]::-moz-range-track {
-    background: #494368;
+    /* background: #494368; */
+    background: #363244;
     height: 1.2em;
     border-radius: 0.5em;
 }
@@ -240,12 +244,12 @@ input[type="range"]::-moz-range-thumb:hover {
 
 .bar {
     display: grid;
-    grid-template-rows: 0.5fr repeat(5, 1fr) 0.5fr;
+    grid-template-rows: 10% repeat(7, 1fr) 10%;
     grid-template-columns: 100%;
     align-items: center;
     justify-content: center;
     padding-bottom: 10%;
-    width: 4em;
+    width: 6em;
     height: auto;
     border-radius: 0 250px 250px 0;
     background: #252230;
@@ -323,7 +327,7 @@ input[type="range"]::-moz-range-thumb:hover {
     /* margin-top: auto; */
     align-self: center;
     grid-column: 1 / span 1;
-    grid-row: 6 / span 1;
+    grid-row: 8 / span 1;
     pointer-events: all;
     width: 70%;
     height: auto;
@@ -388,3 +392,50 @@ input[type="range"]::-moz-range-thumb:hover {
         display: none;
     }
 }
+
+.plots {
+    margin-top: 20%;
+    /* display: flex;
+    flex-direction: column; */
+    /* align-items: center; */
+    /* justify-content: center; */
+}
+
+.js-plotly-plot {
+    /* width: 100%; */
+    /* height: auto; */
+    height: 175px;
+    /* align-self: center; */
+    /* height: 50rem; */
+    /* padding-top: 100%; */
+    /* width: 100%; */
+    /* padding-bottom: 100%; */
+    /* position: relative; */
+    margin-top: 10%;
+    /* margin-left: -5%; */
+    /* margin-bottom: -100%; */
+}
+
+.js-plotly-plot * {
+    height: 100%;
+}
+
+.svg-container {
+    padding-top: 100px;
+    height: 100% !important;
+}
+
+.main-svg {
+    border-radius: 3em;
+    height: 80% !important;
+}
+
+g.bglayer>.bg {
+    /* background-color: #000808; */
+    fill: #6681 !important;
+}
+
+
+/* .bg {
+    fill-opacity: 0.1 !important;
+} */

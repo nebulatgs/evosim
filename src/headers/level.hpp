@@ -17,6 +17,11 @@ public:
     void add(Creature* creature);
     void add(Border* border);
     void update(uint8_t *pixels);
+
+	float getCreatureAvgResistance();
+	float getCreatureAvgSize();
+	int getCreatureCount();
+
     int getFoodCount();
     Thing* getFood(int i);
     bool isAntibiotic();

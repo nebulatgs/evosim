@@ -16,6 +16,7 @@
     <!-- <link rel="stylesheet" href="boid.css"> -->
     <!-- <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script> -->
     <script src="bowser.js"></script>
+    <script src='https://cdn.plot.ly/plotly-latest.min.js'></script>
     <title>Evosim</title>
 </head>
 
@@ -60,7 +61,13 @@
             <input type="range" min="0" max="2" step="any" id="speed" v-model="ralignment" oninput="changeSpeed(this)">
 
         </div>
-        <div class="pauser">
+        <div class="plots">
+            <label>number of cells:</label>
+            <div id="plot1"></div>
+            <label>average resistance:</label>
+            <div id="plot2"></div>
+            <label>average size:</label>
+            <div id="plot3"></div>
         </div>
     </div>
 
@@ -224,6 +231,7 @@
             }
         }
     </script>
+    <script src="plots.js"></script>
 </body>
 
 </html>

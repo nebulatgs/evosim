@@ -39,6 +39,35 @@ bool Level::isAntibiotic()
 	return antibiotic;
 }
 
+float Level::getCreatureAvgResistance()
+{
+	uint32_t sum = 0;
+	float avg;
+	for (auto creature : creatures)
+	{
+		sum += creature->a_res;
+	}
+	avg = (float)sum / (float)creatures.size();
+	return avg;
+}
+
+float Level::getCreatureAvgSize()
+{
+	uint32_t sum = 0;
+	float avg;
+	for (auto creature : creatures)
+	{
+		sum += creature->size;
+	}
+	avg = (float)sum / (float)creatures.size();
+	return avg;
+}
+
+int Level::getCreatureCount()
+{
+	return creatures.size();
+}
+
 void Level::update(uint8_t *pixels)
 {
 	if (time(NULL) - oldTime > (6 / stg.speed))
@@ -74,8 +103,6 @@ void Level::update(std::vector<T> &things)
 			oldSize = things.size();
 		}
 	}
-	
-	
 }
 
 Level::~Level()

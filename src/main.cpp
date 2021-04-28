@@ -51,6 +51,19 @@ extern "C" void EMSCRIPTEN_KEEPALIVE nextFrame(float speed)
 	frame = 1;
 }
 
+extern "C" float EMSCRIPTEN_KEEPALIVE getAvgResistance()
+{
+	return lvl->getCreatureAvgResistance();
+};
+extern "C" float EMSCRIPTEN_KEEPALIVE getAvgSize()
+{
+	return lvl->getCreatureAvgSize();
+};
+extern "C" int EMSCRIPTEN_KEEPALIVE getCount()
+{
+	return lvl->getCreatureCount();
+};
+
 int main();
 
 extern "C" void EMSCRIPTEN_KEEPALIVE restart()
