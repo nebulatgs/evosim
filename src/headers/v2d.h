@@ -61,7 +61,12 @@ class v2d {
         return inv_sqrt(sqrLen());
     }
     float sqrLen() { return(x * x + y * y); }
-    float sqrDist(const v2d& b) { v2d a = *this - b; return(a.x * a.x + a.y * a.y); }
+    float sqrDist(const v2d& b) { 
+		// v2d a = *this - b; 
+		// return(a.x * a.x + a.y * a.y); 
+
+		return ((x - b.x) * (x - b.x) + (y - b.y) * (y - b.y));
+	}
 
     v2d limit(float b)
     {

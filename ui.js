@@ -60,9 +60,21 @@ if (browserName == "Firefox") {
     firefox.remove();
 }
 
+function checkWindow() {
+    if (window.innerWidth < screen.width || window.innerHeight < screen.height) { console.log("h"); }
+
+}
+
 function setCanvas() {
     var canvas = document.getElementById("canvas");
-    canvas.setAttribute("style", `width: ${window.screen.width}px; height: ${window.screen.height}px`);
+    // canvas.setAttribute("style", `width: ${window.screen.width}px; height: ${window.screen.height}px`);
+    // // var html = document.getElementsByTagName("html")[0];
+    // var ratio = window.devicePixelRatio || 1;
+    // ratio /= 1.4;
+    // var w = screen.availWidth * ratio;
+    // var h = screen.availHeight * ratio;
+    // canvas.setAttribute("style", `width: ${w}px !important; height: ${h}px !important`);
+    // // html.setAttribute("style", `width: ${w}px; height: ${h}px`);
 }
 
 setCanvas();

@@ -32,9 +32,12 @@ var trace2 = {
 };
 // var data = [trace0];
 
+var layW = 200;
+var layH = 200;
+
 var resLayout = {
-    width: 200,
-    height: 200,
+    width: layW,
+    height: layH,
     margin: {
         l: 0,
         r: 0,
@@ -65,8 +68,8 @@ var size = 2.5;
 var maxSize = 2.5;
 
 var sizeLayout = {
-    width: 200,
-    height: 200,
+    width: layW,
+    height: layH,
     margin: {
         l: 0,
         r: 0,
@@ -98,8 +101,8 @@ var maxCount = 0;
 
 
 var countLayout = {
-    width: 200,
-    height: 200,
+    width: layW,
+    height: layH,
     margin: {
         l: 0,
         r: 0,
@@ -140,6 +143,19 @@ Plotly.newPlot('plot3', [trace2], sizeLayout, config);
 // var iteration = -10;
 
 function updatePlot() {
+    if (window.matchMedia("(pointer:none),(pointer:coarse)").matches) {
+        layW = 300;
+        layH = 300;
+    } else {
+        layW = 200;
+        layH = 200;
+    }
+    countLayout.height = layH;
+    countLayout.width = layW;
+    sizeLayout.height = layH;
+    sizeLayout.width = layW;
+    resLayout.height = layH;
+    resLayout.width = layW;
     if (document.getElementById("pauseButton").checked) { return; }
     // iteration++;
     // if (iteration % 10 != 0) {

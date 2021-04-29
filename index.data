@@ -139,7 +139,13 @@ void main(){
     //if(col.r < 0.1)
         //col = vec3(1.,0,0);
     // Output to screen S
-    vec4 texCol = texture2D(texture, normCoords * vec2(1.));
+	vec4 texCol;
+	if(normCoords.x == 0.0 || normCoords.y == 0.0 || normCoords.x >= 1.0 - 1.0 / tileDims.x || normCoords.y >= 1.0 - 1.0 / tileDims.y){
+		texCol = vec4(0.663, 0.675, 0.663, 1.0);
+	}
+	else{
+		texCol = texture2D(texture, normCoords);
+	}
     if(texCol.xyz == vec3(0)){
         // texcol = vec4(0.086f, 0.086f, 0.086f, 1.0f);
         discard;

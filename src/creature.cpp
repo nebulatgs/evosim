@@ -149,28 +149,29 @@ bool Creature::findFood(int radius, void *buffer)
 	{
 		return 1;
 	}
-	int index = 0;
+	// int index = 0;
 	float distance = 99999;
 	int food = -1;
-	int r = 0;
-	int d = r + current_lvl->getFoodCount() / 1;
-	for (int i = r; i < d; i++)
+	// int r = 0;
+	// int d = r + current_lvl->getFoodCount() / 1;
+	for (int i = 0; i < current_lvl->getFoodCount(); i++)
 	{
-		auto thing = current_lvl->getFood(i);
-		if (thing->type == TileType::Food)
-		{
+		auto thing = (Food *)(current_lvl->getFood(i));
+		// auto thing = current_lvl->foods[i];
+		// if (thing->type == TileType::Food)
+		// {
 			if (pos.x == thing->pos.x && pos.y == thing->pos.y)
 			{
 				return 0;
 			}
 			float dist = pos.sqrDist(thing->pos);
-			if (dist < distance && dist < radius * radius && ((Food *)thing)->food)
+			if (dist < distance && dist < radius * radius && thing->food)
 			{
 				distance = dist;
-				food = index;
+				food = i;
 			}
-		}
-		index++;
+		// }
+		// index++;
 	}
 	if (food == -1)
 		return 1;
@@ -208,7 +209,7 @@ bool Creature::moveFood()
 {
 	if (closest_food == nullptr)
 		return 1;
-	v2d dist = closest_food->pos - pos;
+	v2d dist = foodPos - pos;
 	dist.setLen(0.5 * stg.speed * speed);
 	float tempX = dist.x, tempY = dist.y;
 	pos.x += (tempX + pos.x) < stg.map_width - 1 && (tempX + pos.x) > 1 ? tempX : 1;
@@ -240,7 +241,8 @@ bool Creature::reproduce()
 bool Creature::SetARes(int strength)
 {
 	a_res = strength;
-	uint8_t *startCol = (uint8_t *)&origCol;
+	uint32_t o_col = origCol;
+	uint8_t *startCol = (uint8_t *)&o_col;
 	uint8_t r = (startCol[0] * (100 - strength) + (0x34 * strength)) / 100;
 	uint8_t g = (startCol[1] * (100 - strength) + (0x98 * strength)) / 100;
 	uint8_t b = (startCol[2] * (100 - strength) + (0xdb * strength)) / 100;

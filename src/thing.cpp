@@ -9,10 +9,8 @@ void Thing::randomize()
 
 
 
-Thing::Thing(int x, int y, TileType type) : type(type)
+Thing::Thing(int x, int y, TileType type) : type(type), pos(x,y)
 {
-	pos.x = x;
-	pos.y = y;
 }
 
 Thing::~Thing()
