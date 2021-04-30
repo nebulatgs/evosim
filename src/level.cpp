@@ -6,7 +6,8 @@
 
 Level::Level()
 {
-	oldTime = time(NULL) - ((6 / stg.speed) - 1);
+	// oldTime = time(NULL) - ((6 / stg.speed) - 1);
+	oldTime = emscripten_get_now() + 16000 / stg.speed;
 }
 
 void Level::add(Food *food)
@@ -70,9 +71,9 @@ int Level::getCreatureCount()
 
 void Level::update(uint8_t *pixels)
 {
-	if (time(NULL) - oldTime > (6 / stg.speed))
+	if (oldTime <= emscripten_get_now())
 	{
-		oldTime = time(NULL);
+		oldTime = emscripten_get_now() + (18000 / stg.speed);
 		antibiotic = true;
 		for (int i = 0; i < stg.map_height * stg.map_width * 3; i += 3)
 		{

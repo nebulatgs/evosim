@@ -172,14 +172,18 @@ function updatePlot() {
     if (count > maxCount) { maxCount = count; }
     trace0.y.push(count);
     countLayout.yaxis.range[1] = maxCount * 1.2;
+    document.getElementById("plot1max").innerText = Math.floor(maxCount * 1.2);
+    document.getElementById("plot1mid").innerText = Math.floor((maxCount * 1.2) / 2);
+    document.getElementById("plot1val").innerText = Math.floor(count);
 
     if (trace1.x.length > 100) {
         trace1.x.shift();
         trace1.y.shift();
     }
     trace1.x.push(trace1.x[trace1.x.length - 1] + 1);
-    trace1.y.push(Module._getAvgResistance());
-
+    var resistance = Module._getAvgResistance();
+    trace1.y.push(resistance);
+    document.getElementById("plot2val").innerText = Math.floor(resistance) + '%';
     if (trace2.x.length > 100) {
         trace2.x.shift();
         trace2.y.shift();
@@ -189,6 +193,9 @@ function updatePlot() {
     if (size > maxSize) { maxSize = size; }
     trace2.y.push(size);
     sizeLayout.yaxis.range[1] = maxSize * 1.2;
+    document.getElementById("plot3max").innerText = (maxSize * 1.2).toFixed(2);
+    document.getElementById("plot3mid").innerText = ((maxSize * 1.2) / 2).toFixed(2);
+    document.getElementById("plot3val").innerText = size.toFixed(2);
 
     Plotly.update('plot1', [trace0], countLayout, [0]);
     Plotly.update('plot2', [trace1], resLayout, [0]);

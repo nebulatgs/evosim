@@ -52,29 +52,53 @@
         <div id="container">
             <h3>evosim</h3>
             <p>
+                A genetic simulation using WebAssembly
             </p>
-            <div>
-                <br>
-                <input type="checkbox" id="fade" v-model="fade" onchange="toggleFade(this)">
-                <label class="check" for="fade">trails</label>
-            </div>
-            <div>
-                <br>
-                <input type="checkbox" id="reverseA" v-model="reverseA" onchange="toggleReverseA(this)">
-                <label class="check" for="reverseA"> reverse antibiotic</label>
-            </div>
-            <div>
-                <br>
-                <label>speed:</label>
-                <input type="range" min="0" max="2" step="any" id="speed" v-model="ralignment" oninput="changeSpeed(this)">
-            </div>
-            <div class="plots">
-                <label class="plot-label">number of cells:</label>
-                <div id="plot1"></div>
-                <label class="plot-label">average resistance:</label>
-                <div id="plot2"></div>
-                <label class="plot-label">average size:</label>
-                <div id="plot3"></div>
+            <div id="tabbed">
+                <div>
+                    <br>
+                    <input type="checkbox" id="fade" v-model="fade" onchange="toggleFade(this)">
+                    <label class="check" for="fade">trails</label>
+                </div>
+                <div>
+                    <br>
+                    <input type="checkbox" id="reverseA" v-model="reverseA" onchange="toggleReverseA(this)">
+                    <label class="check" for="reverseA"> reverse antibiotic</label>
+                </div>
+                <div>
+                    <br>
+                    <label>speed:</label>
+                    <input type="range" min="0" max="2" step="any" id="speed" v-model="ralignment" oninput="changeSpeed(this)">
+                </div>
+                <div class="plots">
+                    <label class="plot-label">number of cells:<span id="plot1val">26</span></label>
+                    <div class="plotbox">
+                        <div class="numbers">
+                            <span id="plot1max">1000</span>
+                            <span id="plot1mid">500</span>
+                            <span id="plot1min">0</span>
+                        </div>
+                        <div id="plot1"></div>
+                    </div>
+                    <label class="plot-label">average resistance:<span id="plot2val">15</span></label>
+                    <div class="plotbox">
+                        <div class="numbers">
+                            <span id="plot2max">100%</span>
+                            <span id="plot2mid">50%</span>
+                            <span id="plot2min">0%</span>
+                        </div>
+                        <div id="plot2"></div>
+                    </div>
+                    <label class="plot-label">average size:<span id="plot3val">1.00</span></label>
+                    <div class="plotbox">
+                        <div class="numbers">
+                            <span id="plot3max">1000</span>
+                            <span id="plot3mid">500</span>
+                            <span id="plot3min">0</span>
+                        </div>
+                        <div id="plot3"></div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -219,8 +243,8 @@
 
 
     </div>
-    <script src="ui.js"></script>
-    <script src="serviceworker.js"></script>
+    <script async src="ui.js"></script>
+    <script async src="serviceworker.js"></script>
     <script>
         window.addEventListener('load', () => {
             registerSW();
@@ -239,7 +263,7 @@
             }
         }
     </script>
-    <script src="plots.js"></script>
+    <script async src="plots.js"></script>
 </body>
 
 </html>

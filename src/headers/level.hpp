@@ -35,6 +35,6 @@ private:
     std::vector<Creature*> creatures;
     std::vector<Border*> borders;
 
-    long oldTime;
+    double oldTime;
     bool antibiotic;
 };

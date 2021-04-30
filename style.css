@@ -104,7 +104,7 @@ canvas {
     transition-timing-function: cubic-bezier(.25, .49, .48, 1);
     opacity: 1;
     /* transition-timing-function: cubic-bezier(0.785, 0.135, 0.15, 0.86); */
-    width: 1.5em;
+    width: 2.75em;
     height: 10em;
     /* background-color: var(--green-accent); */
     pointer-events: all;
@@ -136,11 +136,49 @@ canvas {
     color: var(--light);
 }
 
+#container p {
+    font-family: 'Lexend Deca', sans-serif;
+    font-size: 2rem;
+    letter-spacing: 0.01em;
+    text-align: right;
+    color: var(--light);
+}
+
+.plotbox {
+    display: flex;
+}
+
+.numbers {
+    font-family: 'Lexend Deca', sans-serif;
+    /* margin-top: 5%; */
+    padding-top: 13%;
+    padding-bottom: 23%;
+    /* margin-bottom: 14%; */
+    padding-right: 5%;
+    margin-left: -5%;
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    color: var(--light);
+}
+
+.numbers>span+span+span {
+    margin-top: 50%;
+}
+
 
 /* Checkbox css */
 
 label.plot-label {
     font-size: 2rem;
+    display: inline-flex;
+    width: 100%;
+    justify-content: space-between;
+}
+
+label.plot-label span {
+    text-align: right;
 }
 
 label {
@@ -453,8 +491,20 @@ input[type="range"]::-moz-range-thumb:hover {
     #bar-parent {
         display: none;
     }
-    #container {
+    /* #container {
         display: none;
+    } */
+    #container {
+        transform: translateX(100%);
+    }
+    #collapser {
+        transform: translateX(28.33rem);
+    }
+    #collapser:checked~#container {
+        transform: translateX(0px);
+    }
+    #collapser:checked {
+        transform: translateX(0px);
     }
 }
 
