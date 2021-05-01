@@ -1,11 +1,11 @@
 var trace0 = {
     x: [0],
-    y: [0],
+    y: [200],
     marker: {
         size: 5,
         color: '#47e5bc'
     },
-    mode: 'lines+markers',
+    mode: 'lines',
     type: 'scatter',
 };
 
@@ -16,7 +16,7 @@ var trace1 = {
         size: 5,
         color: '#da627d'
     },
-    mode: 'lines+markers',
+    mode: 'lines',
     type: 'scatter'
 };
 
@@ -27,7 +27,7 @@ var trace2 = {
         size: 5,
         color: '#b7c3f3'
     },
-    mode: 'lines+markers',
+    mode: 'lines',
     type: 'scatter',
 };
 // var data = [trace0];

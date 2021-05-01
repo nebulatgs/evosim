@@ -214,35 +214,47 @@ int main()
 	//Grid grid = Grid(stg.map_width, stg.map_height, stg);
 	lvl = new Level();
 
-	// Push food cells
-	for (int i = 0; i < stg.map_width * stg.map_height; i++)
-	{
-		int x = i % stg.map_width;
-		x += 1;
-		int y = i / stg.map_width;
-		y += 1;
-		// if (x == 0 || y == 0 || i % stg.map_width == stg.map_width - 1 || i / stg.map_width == stg.map_height - 1)
+	// Push cells
+	// for (int i = 0; i < stg.map_width * stg.map_height; i++)
+	// {
+	// 	int x = i % stg.map_width;
+	// 	x += 1;
+	// 	int y = i / stg.map_width;
+	// 	y += 1;
+	// 	if (randDensity(1000))
+	// 	{
+	// 		lvl->add(new Food(
+	// 			x,
+	// 			y,
+	// 			1));
+	// 	}
+		// if (randDensity(10000))
 		// {
-		// 	lvl->add(new Border(
+		// 	lvl->add(new Creature(
 		// 		x,
-		// 		y));
-		// 	continue;
+		// 		y,
+		// 		0));
 		// }
-		if (randDensity(1000))
-		{
-			lvl->add(new Food(
-				x,
-				y,
-				1));
-		}
-		if (randDensity(10000))
-		{
-			lvl->add(new Creature(
-				x,
-				y,
-				0));
-		}
+	// }
+
+	for (int i = 0; i < 200; i++)
+	{
+		lvl->add(new Creature(
+			emscripten_random() * (float)stg.map_width,
+			emscripten_random() * (float)stg.map_height,
+			0
+		));
 	}
+	for (int i = 0; i < 400; i++)
+	{
+		lvl->add(new Food(
+			emscripten_random() * (float)stg.map_width,
+			emscripten_random() * (float)stg.map_height,
+			1
+		));
+	}
+	
+	
 	// std::cout << lvl->things[14]->x << '\n';
 
 	emscripten_set_main_loop(main_loop, 0, true);
