@@ -6,8 +6,13 @@
 
 Level::Level()
 {
-	// oldTime = time(NULL) - ((6 / stg.speed) - 1);
 	oldTime = emscripten_get_now() + 16000 / stg.speed;
+	foodMap = new Food *[stg.map_width * stg.map_height];
+
+	for (int i = 0; i < stg.map_width * stg.map_height; i++)
+	{
+		foodMap[i] = nullptr;
+	}
 }
 
 void Level::add(Food *food)
@@ -25,6 +30,11 @@ void Level::add(Border *border)
 	borders.push_back(border);
 }
 
+void Level::add(Species *species)
+{
+	this->species.push_back(species);
+}
+
 int Level::getFoodCount()
 {
 	return foods.size();
@@ -33,6 +43,26 @@ int Level::getFoodCount()
 Thing *Level::getFood(int i)
 {
 	return foods[i];
+}
+
+Food *Level::getFood(int x, int y)
+{
+	if (x < stg.map_width &&
+		y < stg.map_height &&
+		x > 0 &&
+		y > 0)
+	{
+		return foodMap[x + (y * stg.map_width)];
+	}
+	else
+	{
+		return nullptr;
+	}
+}
+
+void Level::setFood(int x, int y, Food *value)
+{
+	foodMap[x + (y * stg.map_width)] = value;
 }
 
 bool Level::isAntibiotic()
@@ -69,6 +99,11 @@ int Level::getCreatureCount()
 	return creatures.size();
 }
 
+int Level::getTotalDeaths()
+{
+	return deaths;
+}
+
 void Level::update(uint8_t *pixels)
 {
 	if (oldTime <= emscripten_get_now())
@@ -99,6 +134,10 @@ void Level::update(std::vector<T> &things)
 		oldSize = things.size();
 		if (death)
 		{
+			if(!antibiotic)
+			{
+				deaths++;
+			}
 			delete things[i];
 			things.erase(things.begin() + (i--));
 			oldSize = things.size();

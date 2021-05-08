@@ -8,8 +8,8 @@
 
 #include "settings.hpp"
 
-extern uint16_t screen_width;
-extern uint16_t screen_height;
+// extern uint16_t screen_width;
+// extern uint16_t screen_height;
 extern float zoomPhysics[3];
 extern float scale;
 extern v2d panPhysics[3];

@@ -131,7 +131,7 @@ v2d *processPhysics(v2d *physics, v2d drag, v2d clipStart, v2d clipEnd)
 void setCanvas()
 {
 	getScreenSize();
-	SDL_SetWindowSize(window, (int)screen_width, (int)screen_height);
+	SDL_SetWindowSize(window, (int)stg.screen_width, (int)stg.screen_height);
 	SDL_FlushEvent(SDL_WINDOWEVENT);
 }
 
@@ -139,7 +139,7 @@ void drawGrid()
 {
 	glUseProgram(gridProgram);
 	GLint uniform_Resolution = glGetUniformLocation(gridProgram, "resolution");
-	glUniform2f(uniform_Resolution, screen_width, screen_height);
+	glUniform2f(uniform_Resolution, stg.screen_width, stg.screen_height);
 
 	GLint uniform_Scale = glGetUniformLocation(gridProgram, "scale");
 	glUniform1f(uniform_Scale, stg.scale);
@@ -156,7 +156,7 @@ void drawTiles()
 
 	glUseProgram(tiles2Program);
 	GLint uniform_Resolution = glGetUniformLocation(tiles2Program, "resolution");
-	glUniform2f(uniform_Resolution, screen_width, screen_height);
+	glUniform2f(uniform_Resolution, stg.screen_width, stg.screen_height);
 	GLint uniform_ScaleTiles = glGetUniformLocation(tiles2Program, "scale");
 	glUniform1f(uniform_ScaleTiles, stg.scale);
 
@@ -224,7 +224,7 @@ void initGL(SDL_Window *window)
 	glVertexAttribPointer(posAttribGrid, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 	GLint uniform_WindowSizeGrid = glGetUniformLocation(gridProgram, "resolution");
-	glUniform2f(uniform_WindowSizeGrid, screen_width, screen_height);
+	glUniform2f(uniform_WindowSizeGrid, stg.screen_width, stg.screen_height);
 
 	glUseProgram(tilesProgram);
 
@@ -233,7 +233,7 @@ void initGL(SDL_Window *window)
 	glVertexAttribPointer(posAttribTiles, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 	GLint uniform_WindowSizeTiles = glGetUniformLocation(tilesProgram, "resolution");
-	glUniform2f(uniform_WindowSizeTiles, screen_width, screen_height);
+	glUniform2f(uniform_WindowSizeTiles, stg.screen_width, stg.screen_height);
 
 	GLint uniform_ScaleTiles = glGetUniformLocation(tilesProgram, "scale");
 	glUniform1f(uniform_ScaleTiles, stg.scale);

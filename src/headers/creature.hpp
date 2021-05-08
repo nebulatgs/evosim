@@ -4,13 +4,14 @@
 #include <stdint.h>
 
 #include "thing.hpp"
+#include "species.hpp"
 
 class Food;
 
 class Creature : public Thing
 {
 public:
-	Creature(int x, int y, int species);
+	Creature(int x, int y, Species* species);
 	~Creature();
 
 	int mutate(int count, mutationType mutation);
@@ -21,7 +22,8 @@ public:
 protected:
 	bool processGenome();
 	int processInstruction(int protein, int memory);
-	bool findFood(int radius, void *buffer);
+	bool findFoodv2(int radius, void *buffer);
+	bool findFoodv1(int radius, void *buffer);
 	bool moveFood();
 	bool eatFood();
 	bool reproduce();
@@ -29,7 +31,6 @@ protected:
 	bool SetARes(int strength);
 	bool SetSize(int _size);
 	void mutate();
-	std::vector<Gene> getDefaults();
 
 private:
 	void pSub();
@@ -51,7 +52,7 @@ public:
 	
 	float energy = 250;
 	std::vector<Gene> genome;
-	int species;
+	Species* species;
 	int a_res = 0;
 	float speed = 1.0f;
 

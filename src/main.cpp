@@ -64,6 +64,11 @@ extern "C" int EMSCRIPTEN_KEEPALIVE getCount()
 	return lvl->getCreatureCount();
 };
 
+extern "C" int EMSCRIPTEN_KEEPALIVE getTotalDeaths()
+{
+	return lvl->getTotalDeaths();
+};
+
 int main();
 
 extern "C" void EMSCRIPTEN_KEEPALIVE restart()
@@ -100,22 +105,22 @@ void main_loop()
 	handleEvents(&cursor, zoomPhysics, panPhysics, 1.0f, 50.0f);
 
 	// Calculate zoom and pan
-	float maxScale = ((float)screen_width / (float)stg.map_width) / 2.0f;
+	float maxScale = ((float)stg.screen_width / (float)stg.map_width) / 2.0f;
 	stg.scale = processPhysics(zoomPhysics, stg.drag, maxScale, 50)[2];
 	
 	// v2d clipEnd = {stg.map_width * maxScale * stg.scale * 2 - (float)(stg.map_width * 2), stg.map_height * maxScale * stg.scale * 2 - (float)(stg.map_height * 2)};
 	// v2d clipStart = {-(stg.map_width * maxScale * stg.scale * 2 - (float)(stg.map_width * 2)) / 2, -(stg.map_height * maxScale * stg.scale * 2 - (float)(stg.map_height * 2)) / 2};
 	
-	v2d clipEnd = {(float)screen_width * stg.scale - (float)screen_width, (float)screen_height * stg.scale - (float)screen_height};
+	v2d clipEnd = {(float)stg.screen_width * stg.scale - (float)stg.screen_width, (float)stg.screen_height * stg.scale - (float)stg.screen_height};
 	// v2d clipStart = {-(stg.map_width * maxScale * stg.scale * 2 - (float)(stg.map_width * 2)) / 2, -(stg.map_height * maxScale * stg.scale * 2 - (float)(stg.map_height * 2)) / 2};
 	v2d clipStart = {0, 0};
 	
 	offset = processPhysics(panPhysics, {stg.drag, stg.drag}, clipStart, clipEnd)[2];
 
 	v2d temp = cursor;
-	temp.x /= screen_width / (4.0f * maxScale);
-	temp.y = screen_height - temp.y;
-	temp.y /= screen_height / (4.0f * maxScale);
+	temp.x /= stg.screen_width / (4.0f * maxScale);
+	temp.y = stg.screen_height - temp.y;
+	temp.y /= stg.screen_height / (4.0f * maxScale);
 	// temp.y += 2;
 	// emscripten_log(0, "%f, %f", offset.x, offset.y);
 	offset += v2d(stg.map_width / (2 * maxScale), stg.map_height / (2 * maxScale)) * v2d(stg.scale - maxScale, stg.scale - maxScale) * temp;
@@ -194,13 +199,13 @@ int main()
 	getBrowser();
 	srand(time(nullptr));
 	getScreenSize();
-	stg.map_height = screen_height / 2;
-	stg.map_width = screen_width / 2;
+	stg.map_height = stg.screen_height / 2;
+	stg.map_width = stg.screen_width / 2;
 	pixels = new GLubyte[stg.map_width * 2 * stg.map_height * 2 * 3];
-	// stg.init_width = screen_width;
-	// stg.init_height = screen_height;
+	// stg.init_width = stg.screen_width;
+	// stg.init_height = stg.screen_height;
 	SDL_Renderer *renderer;
-	SDL_CreateWindowAndRenderer(screen_width, screen_height, 0, &window, &renderer);
+	SDL_CreateWindowAndRenderer(stg.screen_width, stg.screen_height, 0, &window, &renderer);
 
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
@@ -236,16 +241,16 @@ int main()
 		// 		0));
 		// }
 	// }
-
-	for (int i = 0; i < 200; i++)
+	Species* defaultSpecies = new Species();
+	for (int i = 0; i < (stg.map_width / 4); i++)
 	{
 		lvl->add(new Creature(
 			emscripten_random() * (float)stg.map_width,
 			emscripten_random() * (float)stg.map_height,
-			0
+			defaultSpecies
 		));
 	}
-	for (int i = 0; i < 400; i++)
+	for (int i = 0; i < (stg.map_width / 2); i++)
 	{
 		lvl->add(new Food(
 			emscripten_random() * (float)stg.map_width,

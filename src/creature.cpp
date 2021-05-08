@@ -5,26 +5,6 @@
 #include "headers/level.hpp"
 #include "headers/proteins.hpp"
 
-std::vector<Gene> Creature::getDefaults()
-{
-	return {
-		{{2, 0, 0}},
-		{{9, 9, 9}},
-		{{0, 0, 0}},
-		
-		{{0, 1, 0}},
-		{{0, 2, 0}},
-		{{0, 3, 0}},
-
-		{{1, 0, 1}}, //Read antibiotic resistance gene
-		{{5, 5, 5}},
-		{{1, 0, 2}},
-
-		{{1, 0, 3}}, // Read size gene
-		{{5, 5, 5}},
-		{{1, 1, 0}}};
-}
-
 bool Creature::update(uint8_t *pixels, Level *lvl)
 {
 	current_lvl = lvl;
@@ -108,7 +88,7 @@ int Creature::processInstruction(int protein, int memory)
 	switch (protein)
 	{
 	case FindFood:
-		error = findFood(memory, &result);
+		error = findFoodv1(memory, &result);
 		if (error)
 			return -1;
 		closest_food = result;
@@ -136,48 +116,80 @@ int Creature::processInstruction(int protein, int memory)
 	return error;
 }
 
-Creature::Creature(int x, int y, int species) : Thing(x, y, TileType::Creature), species(species), size(1)
+Creature::Creature(int x, int y, Species* species) : Thing(x, y, TileType::Creature), species(species), size(1)
 {
 	tiles.push_back(Tile(pos.x, pos.y, {0, 0}, color));
 	genome.clear();
-	genome = getDefaults();
+	genome = this->species->genome;
 }
 
-bool Creature::findFood(int radius, void *buffer)
+bool Creature::findFoodv1(int radius, void *buffer)
 {
 	if (eatTime > emscripten_get_now())
 	{
 		return 1;
 	}
-	// int index = 0;
+
 	float distance = 99999;
 	int food = -1;
-	// int r = 0;
-	// int d = r + current_lvl->getFoodCount() / 1;
 	for (int i = 0; i < current_lvl->getFoodCount(); i++)
 	{
 		auto thing = (Food *)(current_lvl->getFood(i));
-		// auto thing = current_lvl->foods[i];
-		// if (thing->type == TileType::Food)
-		// {
-			if (pos.x == thing->pos.x && pos.y == thing->pos.y)
-			{
-				return 0;
-			}
-			float dist = pos.sqrDist(thing->pos);
-			if (dist < distance && dist < radius * radius && thing->food)
-			{
-				distance = dist;
-				food = i;
-			}
-		// }
-		// index++;
+		if (pos.x == thing->pos.x && pos.y == thing->pos.y)
+		{
+			return 0;
+		}
+		float dist = pos.sqrDist(thing->pos);
+		if (dist < distance && dist < radius * radius && thing->food)
+		{
+			distance = dist;
+			food = i;
+		}
 	}
 	if (food == -1)
 		return 1;
 
 	*(Food **)buffer = (Food *)(current_lvl->getFood(food));
 
+	return 0;
+}
+
+bool Creature::findFoodv2(int radius, void *buffer)
+{
+	if (eatTime > emscripten_get_now())
+	{
+		return 1;
+	}
+	// radius *= 4;
+	float distance = 99999;
+	int food = -1;
+	Food *current_food = nullptr;
+	for (int x = -radius >> 1; x < radius >> 1; x++)
+	{
+		for (int y = -radius >> 1; y < radius >> 1; y++)
+		{
+			Food *checkFood = current_lvl->getFood(pos.x + x, pos.y + y);
+			if (checkFood != nullptr)
+			{
+				float dist = pos.sqrDist(checkFood->pos);
+				if (dist < distance)
+				{
+					current_food = checkFood;
+					distance = dist;
+				}
+			}
+			else
+			{
+				continue;
+			}
+		}
+	}
+
+	if (current_food == nullptr)
+	{
+		return 1;
+	}
+	*(Food **)buffer = current_food;
 	return 0;
 }
 
@@ -271,7 +283,7 @@ bool Creature::eatFood()
 		abs(pos.y - closest_food->pos.y) <= size / 2 &&
 		closest_food->food)
 	{
-		closest_food->randomize();
+		closest_food->randomize(current_lvl);
 		found_food = false;
 		energy += 250;
 		eaten = true;

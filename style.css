@@ -167,6 +167,10 @@ canvas {
     margin-top: 50%;
 }
 
+.numbers span {
+    width: 4ch;
+}
+
 
 /* Checkbox css */
 

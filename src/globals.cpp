@@ -1,7 +1,7 @@
 #include "headers/globals.hpp"
 
-uint16_t screen_width;
-uint16_t screen_height;
+// uint16_t screen_width;
+// uint16_t screen_height;
 float zoomPhysics[3];
 float scale;
 v2d panPhysics[3];
@@ -31,14 +31,14 @@ bool randDensity(int number){
 }
 
 void getScreenSize(){
-    screen_width = (uint16_t)EM_ASM_INT({
+    stg.screen_width = (uint16_t)EM_ASM_INT({
         // var width = window.innerWidth
         // || document.documentElement.clientWidth
         // || document.body.clientWidth;
 		var width = window.screen.width;
         return width;
     });
-    screen_height = (uint16_t)EM_ASM_INT({
+    stg.screen_height = (uint16_t)EM_ASM_INT({
         // var height = window.innerHeight
         // || document.documentElement.clientHeight
         // || document.body.clientHeight;

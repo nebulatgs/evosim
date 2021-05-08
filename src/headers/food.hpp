@@ -9,6 +9,7 @@ class Food : public Thing
 public:
 	Food(int x, int y, bool food);
 	bool update(uint8_t *pixels, Level *lvl);
+	void randomize(Level *lvl);
 
 public:
 	bool food;

@@ -2,8 +2,6 @@
 
 #include "thing.hpp"
 
-class Level;
-
 class Border : public Thing
 {
 public:

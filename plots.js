@@ -25,6 +25,17 @@ var trace2 = {
     y: [2],
     marker: {
         size: 5,
+        color: '#47e5bc'
+    },
+    mode: 'lines',
+    type: 'scatter',
+};
+
+var trace3 = {
+    x: [0],
+    y: [0],
+    marker: {
+        size: 5,
         color: '#b7c3f3'
     },
     mode: 'lines',
@@ -96,6 +107,38 @@ var sizeLayout = {
     showlegend: false,
 }
 
+var deaths = 0;
+var maxdeaths = 0;
+
+var deathsLayout = {
+    width: layW,
+    height: layH,
+    margin: {
+        l: 0,
+        r: 0,
+        t: 0
+    },
+    legend: {
+        orientation: "h"
+    },
+    xaxis: {
+        showgrid: false,
+        zeroline: false,
+        showticklabels: false,
+    },
+    yaxis: {
+        range: [0, 10],
+        showgrid: true,
+        zeroline: true,
+        showticklabels: true,
+        gridcolor: "#494368",
+        zerolinecolor: "#7e77a7",
+    },
+    paper_bgcolor: "rgba(0,0,0,0)",
+    plot_bgcolor: "#000",
+    showlegend: false,
+}
+
 var count = 0;
 var maxCount = 0;
 
@@ -133,12 +176,13 @@ var config = {
     responsive: true,
     staticPlot: true,
 }
-
+var death = 0;
 // Plotly.newPlot('plot1', data, layout);
 
 Plotly.newPlot('plot1', [trace0], countLayout, config);
 Plotly.newPlot('plot2', [trace1], resLayout, config);
-Plotly.newPlot('plot3', [trace2], sizeLayout, config);
+Plotly.newPlot('plot3', [trace3], deathsLayout, config);
+Plotly.newPlot('plot4', [trace2], sizeLayout, config);
 
 // var iteration = -10;
 
@@ -184,6 +228,22 @@ function updatePlot() {
     var resistance = Module._getAvgResistance();
     trace1.y.push(resistance);
     document.getElementById("plot2val").innerText = Math.floor(resistance) + '%';
+
+    if (trace3.x.length > 100) {
+        trace3.x.shift();
+        trace3.y.shift();
+    }
+    trace3.x.push(trace3.x[trace3.x.length - 1] + 1);
+    deaths = Module._getTotalDeaths() - death;
+    death = Module._getTotalDeaths();
+    if (deaths > maxdeaths) { maxdeaths = deaths; }
+    trace3.y.push(deaths);
+    deathsLayout.yaxis.range[1] = maxdeaths * 1.2;
+    document.getElementById("plot3max").innerText = Math.floor(deathsLayout.yaxis.range[1]);
+    document.getElementById("plot3mid").innerText = Math.floor((deathsLayout.yaxis.range[1] - deathsLayout.yaxis.range[0]) / 2);
+    document.getElementById("plot3min").innerText = Math.floor(deathsLayout.yaxis.range[0]);
+    document.getElementById("plot3val").innerText = deaths;
+
     if (trace2.x.length > 100) {
         trace2.x.shift();
         trace2.y.shift();
@@ -193,13 +253,15 @@ function updatePlot() {
     if (size > maxSize) { maxSize = size; }
     trace2.y.push(size);
     sizeLayout.yaxis.range[1] = maxSize * 1.2;
-    document.getElementById("plot3max").innerText = (maxSize * 1.2).toFixed(2);
-    document.getElementById("plot3mid").innerText = ((maxSize * 1.2) / 2).toFixed(2);
-    document.getElementById("plot3val").innerText = size.toFixed(2);
+    document.getElementById("plot4max").innerText = (maxSize * 1.2).toFixed(2);
+    document.getElementById("plot4mid").innerText = ((maxSize * 1.2) / 2).toFixed(2);
+    document.getElementById("plot4val").innerText = size.toFixed(2);
 
     Plotly.update('plot1', [trace0], countLayout, [0]);
     Plotly.update('plot2', [trace1], resLayout, [0]);
-    Plotly.update('plot3', [trace2], sizeLayout, [0]);
+    Plotly.update('plot3', [trace3], deathsLayout, [0]);
+    Plotly.update('plot4', [trace2], sizeLayout, [0]);
+
 
     // window.requestAnimationFrame(updatePlot);
     return;
